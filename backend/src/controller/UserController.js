@@ -91,22 +91,16 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    const userId = req.params.id; // Lấy userId từ params
-
+    const userId = req.params.id; 
     if (!userId) {
       return res.status(400).json({
         status: "ERROR",
         message: "The userId is required",
       });
     }
-
-    // Gọi service để xoá người dùng
     const response = await UserService.deleteUser(userId);
-
-    // Trả về kết quả sau khi xoá thành công
     return res.status(200).json(response);
   } catch (e) {
-    // Bắt lỗi và trả về
     return res.status(500).json({
       status: "ERROR",
       message: "Internal Server Error",

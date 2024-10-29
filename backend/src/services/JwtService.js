@@ -1,46 +1,49 @@
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const generalAccessToken = async (payload) => {
-    const access_token = jwt.sign({payload}, 'access_token', { expiresIn: '30s' });
-    return access_token;
-}
+  const access_token = jwt.sign({ payload }, "access_token", {
+    expiresIn: "1h",
+  });
+  return access_token;
+};
 
 const generalRefreshToken = async (payload) => {
-    const access_token = jwt.sign({payload}, 'refresh_token', { expiresIn: '365d' });
-    return access_token;
-}
+  const access_token = jwt.sign({ payload }, "refresh_token", {
+    expiresIn: "365d",
+  });
+  return access_token;
+};
 
 const refreshTokenJwtService = (token) => {
-    return new Promise((resolve, reject) => {
-                try {  
-                    console.log('token',token)
-                    jwt.verify(token, process.env.REFRESH_TOKEN,async (err, user)=>{
-                        if(err){
-                            resolve({
-                                status: 'ERROR',
-                                message:'The authentication'
-                            })
-                        }
-                        //console.log('user',user)
-                        const {payload}=user
-                        const access_token=await generalAccessToken({
-                        id:payload?.id,
-                        isAdmin:payload?.isAdmin
-                    })
-                    //console.log('access_token', access_token)
-                    resolve({
-                        status: 'OK',
-                        message: 'Success',
-                        access_token
-                    });
-                    })
-                    
-                } catch (e) {
-                    reject(e);
-                }
-    })
-}
+  return new Promise((resolve, reject) => {
+    try {
+      console.log("token", token);
+      jwt.verify(token, process.env.REFRESH_TOKEN, async (err, user) => {
+        if (err) {
+          resolve({
+            status: "ERROR",
+            message: "The authentication",
+          });
+        }
+        //console.log('user',user)
+        const { payload } = user;
+        const access_token = await generalAccessToken({
+          id: payload?.id,
+          isAdmin: payload?.isAdmin,
+        });
+        //console.log('access_token', access_token)
+        resolve({
+          status: "OK",
+          message: "Success",
+          access_token,
+        });
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 
 // const refreshTokenJwtService = async (token) => {
 //     return new Promise((resolve, reject) => {
@@ -57,7 +60,7 @@ const refreshTokenJwtService = (token) => {
 //                         error: err.message // Trả về chi tiết lỗi cho phía client
 //                     });
 //                 }
-                
+
 //                 console.log('user', user);
 //                 resolve({
 //                     status: 'OK',
@@ -76,7 +79,7 @@ const refreshTokenJwtService = (token) => {
 // };
 
 module.exports = {
-    generalAccessToken,
-    generalRefreshToken,
-    refreshTokenJwtService
-}
+  generalAccessToken,
+  generalRefreshToken,
+  refreshTokenJwtService,
+};
