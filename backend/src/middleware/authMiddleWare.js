@@ -39,7 +39,7 @@ const authMiddleWare = (req, res, next) => {
 };
 
 const authUserMiddleWare = (req, res, next) => {
-  const authHeader = req.headers.token;
+  const authHeader = req.headers.authorization;
   if (!authHeader) {
     return res.status(401).json({
       message: "Token is missing",
@@ -48,7 +48,12 @@ const authUserMiddleWare = (req, res, next) => {
   }
 
   const token = authHeader.split(" ")[1];
-  const userId = req.params.id;
+  if (!process.env.ACCESS_TOKEN) {
+    return res.status(500).json({
+      message: "Khóa bí mật không được cung cấp",
+      status: "ERROR",
+    });
+  }
   jwt.verify(token, process.env.ACCESS_TOKEN, (err, user) => {
     if (err) {
       return res.status(401).json({
@@ -58,7 +63,7 @@ const authUserMiddleWare = (req, res, next) => {
     }
 
     const { payload } = user;
-    if (payload?.isAdmin || payload?.id === userId) {
+    if (payload?.isAdmin || payload?.id === user.payload.id) {
       next();
     } else {
       return res.status(403).json({

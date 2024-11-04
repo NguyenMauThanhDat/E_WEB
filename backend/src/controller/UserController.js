@@ -144,14 +144,21 @@ const getDetailUser = async (req, res) => {
 
 const refreshToken = async (req, res) => {
   try {
-    const token = req.headers.token.split(" ")[1];
+    const authHeader = req.headers.authorization || req.headers.token;
+    if (!authHeader) {
+      return res.status(401).json({
+        message: "Token is missing",
+        status: "ERROR",
+      });
+    }
+    const token = authHeader.split(" ")[1];
     if (!token) {
       return res.status(400).json({
         status: "ERROR",
-        message: "The userId is required",
+        message: "The token is required",
       });
     }
-    const response = await JwtService.refreshTokenJwtService(token);
+    const response = await JwtService.refreshTokenService(token);
     return res.status(200).json(response);
   } catch (e) {
     return res.status(404).json({
