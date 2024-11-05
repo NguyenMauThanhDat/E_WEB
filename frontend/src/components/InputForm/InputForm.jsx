@@ -5,8 +5,12 @@ import { WrapperInputStyle } from './style';
 const InputForm = (props) => {
     const {valueInput,setValueInput} = useState('')
     const {placeholder="Nhap text",...rests} = props
+    const handleOnChangeInput = (e) => {
+        props.onChange(e.target.value)
+    }
+
   return (
-      <WrapperInputStyle placeholder={placeholder} valueInput={valueInput} {...rests}/>
+      <WrapperInputStyle placeholder={placeholder} value={props.value} {...rests} onChange={handleOnChangeInput}/>
   );
 };
 

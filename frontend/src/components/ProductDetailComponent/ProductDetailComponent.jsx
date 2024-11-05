@@ -81,7 +81,7 @@ const ProductDetailComponent = () => {
         <div style={{display:'flex', alignItems:'center', gap:'12px'}}>
           <ButtonComponent
           size={40}
-          bordered={false}
+          //bordered={false}
           // icon={<SearchOutlined style={{color : colorButton }}/>}
           styleButton={{
             background:'rgb(255,57,69)',
@@ -96,7 +96,7 @@ const ProductDetailComponent = () => {
         </ButtonComponent>
         <ButtonComponent
           size={40}
-          bordered={false}
+          //bordered={false}
           // icon={<SearchOutlined style={{color : colorButton }}/>}
           styleButton={{
             background:'#fff',
