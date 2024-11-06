@@ -6,6 +6,10 @@ import H14 from '../../assets/image/H14.png';
 import { Divider, Image } from 'antd';
 import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
 import { useNavigate } from 'react-router-dom';
+import {useMutation} from '@tanstack/react-query'
+import * as UseService from '../../services/UserService'
+import { useMutationHooks } from '../../hooks/UserMutationHooks';
+import Loading from '../../components/LoadingComponent/Loading'
 
 const SignInPage = () => {
   const [isShowPassword, setIsShowPassword]=useState(false)
@@ -13,6 +17,14 @@ const SignInPage = () => {
   const [password, setPassword]= useState('')
 
   const navigate=useNavigate()
+
+  const mutation = useMutationHooks(
+      data => UseService.loginUser(data)
+  )
+
+const {data, isLoading} =mutation
+console.log(mutation)
+
   const handleNegivateSignUp = () =>{
     navigate('/sign-up')
   }
@@ -25,6 +37,7 @@ const SignInPage = () => {
   }
 
   const handleSignIn = () =>{
+    mutation.mutate({email,password})
     console.log(email, password)
   }
 
@@ -34,7 +47,7 @@ const SignInPage = () => {
     <WrapperContainerLeft>
       <h1>Xin chao</h1>
       <p>Dang nhap hoac tao tai khoan</p>
-      <InputForm style={{marginBottom:"10px"}} placehoder="abc@gmail.com" value={email} onChange={handleOnchangeEmail}/>
+      <InputForm style={{marginBottom:"10px"}} placeholder="abc@gmail.com" value={email} onChange={handleOnchangeEmail}/>
       
       <div style={{position:'relative'}}>
       <span onClick={()=>setIsShowPassword(!isShowPassword)} style={{zIndex:'10', position:'absolute',top:'4px', right:'8px'}}>
@@ -42,7 +55,9 @@ const SignInPage = () => {
       </span>
       <InputForm placeholder="password"  type={isShowPassword?"text":"password"} value={password} onChange={handleOnchangePassword}/>
       </div>
+      {data?.status==='ERR' && <span style={{color:'red'}}>{data?.message}</span>}
       
+      {/* <Loading isLoading={isLoading}> */}
       <ButtonComponent
           disabled={!email.length || !password.length}
           onClick={handleSignIn}
@@ -61,6 +76,7 @@ const SignInPage = () => {
           styleTextButton={{color:'#fff', fontSize:'15px', fontWeight:'500'}}
         >
         </ButtonComponent>
+         {/* </Loading> */}
         <p><WrapperTextLight>Quen mat khau</WrapperTextLight></p>
         <p>Chua co tai khoan <WrapperTextLight onClick={handleNegivateSignUp}>Tao tai khoan</WrapperTextLight></p>
 
