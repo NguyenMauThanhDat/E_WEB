@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {WrapperContainerLeft, WrapperContainerRight, WrapperTextLight} from './style'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
 import InputForm from '../../components/InputForm/InputForm';
@@ -9,12 +9,18 @@ import { useNavigate } from 'react-router-dom';
 import {useMutation} from '@tanstack/react-query'
 import * as UseService from '../../services/UserService'
 import { useMutationHooks } from '../../hooks/UserMutationHooks';
+import * as message from '../../components/Message/Message';
 import Loading from '../../components/LoadingComponent/Loading'
+import { jwtDecode } from 'jwt-decode';
+import {useDispatch} from 'react-redux'
+import { updateUser } from '../../redux/slice/userSlide';
+
 
 const SignInPage = () => {
   const [isShowPassword, setIsShowPassword]=useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword]= useState('')
+  const dispatch = useDispatch()
 
   const navigate=useNavigate()
 
@@ -22,8 +28,26 @@ const SignInPage = () => {
       data => UseService.loginUser(data)
   )
 
-const {data, isLoading} =mutation
-console.log(mutation)
+const {data, isLoading, isSuccess} =mutation
+useEffect(()=>{
+   if(isSuccess && data?.status !== 'ERR'){
+      navigate('/')
+      localStorage.setItem('access_token',JSON.stringify(data?.access_token))
+      if(data?.access_token){
+        const decode =jwtDecode(data?.access_token)
+        console.log('decode', decode)
+        if(decode?.id){
+          handleGetDetailUser(decode?.id,data?.access_token)
+        }
+      }
+   }
+},[isSuccess])
+
+const handleGetDetailUser = async (id, token) => {
+  const res= await UseService.getDetailUser(id, token);
+  dispatch(updateUser({...res?.data, access_token: token}))
+  console.log('res',res)
+}
 
   const handleNegivateSignUp = () =>{
     navigate('/sign-up')
