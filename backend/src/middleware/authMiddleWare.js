@@ -26,7 +26,6 @@ const authMiddleWare = (req, res, next) => {
       });
     }
 
-    //const { payload } = user;
     if (!user?.isAdmin) {
       next();
     } else {
@@ -62,8 +61,8 @@ const authUserMiddleWare = (req, res, next) => {
       });
     }
 
-    //const { payload } = user
-    if (user?.isAdmin || user?.id === user.id) {
+    
+    if (user?.isAdmin || user?.id === user.payload.id) {
       next();
     } else {
       return res.status(403).json({

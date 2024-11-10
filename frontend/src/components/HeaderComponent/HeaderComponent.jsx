@@ -18,6 +18,7 @@ import {useSelector} from'react-redux';
 const HeaderComponent = () => {
   const navigate = useNavigate()
   const user = useSelector((state)=>state.user)
+  console.log(user)
   const handleNavigateLogin = () => {
       navigate('/sign-in')
   }

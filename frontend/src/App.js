@@ -54,13 +54,14 @@
 
 
 import axios from 'axios';
-//import { useEffect } from 'react';
+import { useEffect } from 'react';
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { routes } from "./Routes";
 //import HeaderComponent from "./components/HeaderComponent/HeaderComponent";
 import DefaultComponent from "./components/DefaultComponent/DefaultComponent";
 import { useQuery } from '@tanstack/react-query';
+import { isJsonString } from './utils';
 //import {isJsonString} from './utils'
 //import { jwtDecode } from 'jwt-decode';
 //import * as UseService from './services/UserService';
@@ -68,7 +69,13 @@ import { useQuery } from '@tanstack/react-query';
 //import { updateUser } from './redux/slice/userSlide';
 
 function App() {
-
+   useEffect(()=>{
+      let storageData=localStorage.getItem('access_token')
+      if(storageData && isJsonString(storageData)){
+         storageData =JSON.parse(storageData)
+      }
+      console.log(storageData)
+   },[])
   
 
   const fetchAPI = async () => {
