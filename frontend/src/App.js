@@ -63,19 +63,29 @@ import DefaultComponent from "./components/DefaultComponent/DefaultComponent";
 import { useQuery } from '@tanstack/react-query';
 import { isJsonString } from './utils';
 //import {isJsonString} from './utils'
-//import { jwtDecode } from 'jwt-decode';
-//import * as UseService from './services/UserService';
-//import {useDispatch} from 'react-redux'
-//import { updateUser } from './redux/slice/userSlide';
+import { jwtDecode } from 'jwt-decode';
+import * as UseService from './services/UserService';
+import {useDispatch} from 'react-redux'
+import { updateUser } from './redux/slice/userSlide';
 
 function App() {
    useEffect(()=>{
       let storageData=localStorage.getItem('access_token')
       if(storageData && isJsonString(storageData)){
          storageData =JSON.parse(storageData)
+         const decoded=jwtDecode(storageData)
+         if(decoded?.id){
+            handleGetDetailUser(decoded?.id,storageData)
+         }
       }
       console.log(storageData)
    },[])
+   
+  const dispatch = useDispatch()
+  const handleGetDetailUser = async (id, token) => {
+      const res = await UseService.getDetailUser(id, token)
+      dispatch(updateUser({...res?.data,access_token:token}))
+  }
   
 
   const fetchAPI = async () => {
