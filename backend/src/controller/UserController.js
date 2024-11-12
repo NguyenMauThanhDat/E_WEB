@@ -144,7 +144,6 @@ const getDetailUser = async (req, res) => {
 };
 
 const refreshToken = async (req, res) => {
-  console.log(req.cookies.refresh_token);
   try {
     const authHeader = req.cookies.refresh_token || req.headers.token;
     if (!authHeader) {
@@ -171,6 +170,20 @@ const refreshToken = async (req, res) => {
   }
 };
 
+const logoutUser = async (req, res) => {
+  try {
+    res.clearCookie('refresh_token');
+    return res.status(200).json({
+      status: 'OK',
+      message: 'Logout Success'
+    });
+  } catch (e) {
+    return res.status(404).json({
+      error: e.message,
+    });
+  }
+};
+
 module.exports = {
   createUser,
   loginUser,
@@ -179,4 +192,5 @@ module.exports = {
   getAllUser,
   getDetailUser,
   refreshToken,
+  logoutUser
 };

@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const dotenv=require("dotenv");
-dotenv.config()
+const dotenv = require("dotenv");
+dotenv.config();
 
 const generalAccessToken = async (payload) => {
   const access_token = jwt.sign({ ...payload }, process.env.ACCESS_TOKEN, {
@@ -43,7 +43,7 @@ const refreshTokenService = (token) => {
           id: user.id,
           isAdmin: user.isAdmin,
         });
-        
+
         resolve({
           status: "OK",
           message: "Success",
@@ -56,7 +56,6 @@ const refreshTokenService = (token) => {
     }
   });
 };
-
 
 // const refreshTokenService = (token) => {
 //   return new Promise((resolve, reject) => {
@@ -71,7 +70,6 @@ const refreshTokenService = (token) => {
 //     }
 //   });
 // };
-
 
 module.exports = {
   generalAccessToken,

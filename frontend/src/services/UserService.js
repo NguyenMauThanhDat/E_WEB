@@ -39,7 +39,7 @@ export const getDetailUser = async (id, access_token) => {
     }
 };
 
- export const refreshToken = async () => {
+export const refreshToken = async () => {
     try {
         console.log(process.env.REACT_APP_API_URL_BACKEND);
         const res = await axios.post(
@@ -51,4 +51,13 @@ export const getDetailUser = async (id, access_token) => {
         console.error("Lỗi khi lấy thông tin người dùng:", error.message);
         throw error; 
     }
+};
+
+
+export const logoutUser = async () => {
+        console.log(process.env.REACT_APP_API_URL_BACKEND);
+        const res = await axios.post(
+            `${process.env.REACT_APP_API_URL_BACKEND}/user/log-out`
+        );
+        return res.data;
 };

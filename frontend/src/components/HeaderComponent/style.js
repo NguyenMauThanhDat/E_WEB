@@ -31,3 +31,10 @@ color: #fff;
 white-space: nowrap;
 `;
 
+export const WrapperContentPopup = styled.p`
+cursor: pointer;
+&:hover{
+  background: rgb(26,168,255);
+  color:#fff
+}
+`;
