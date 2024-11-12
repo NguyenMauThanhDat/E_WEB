@@ -56,6 +56,12 @@ const loginUser = async (req, res) => {
     } 
     console.log("isCheckEmail", isCheckEmail);
     const response = await UserService.loginUser(req.body);
+    const {refresh_token, ...newResponse} = response
+    res.cookie('refresh_token',refresh_token,{
+      httpOnly: true,
+      secure: false,
+      sameSite: 'strict'
+    });
     return res.status(200).json(response);
   } catch (e) {
     return res.status(404).json({
@@ -138,8 +144,9 @@ const getDetailUser = async (req, res) => {
 };
 
 const refreshToken = async (req, res) => {
+  console.log(req.cookies.refresh_token);
   try {
-    const authHeader = req.headers.authorization || req.headers.token;
+    const authHeader = req.cookies.refresh_token || req.headers.token;
     if (!authHeader) {
       return res.status(401).json({
         message: "Token is missing",

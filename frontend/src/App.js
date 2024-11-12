@@ -70,15 +70,10 @@ import { updateUser } from './redux/slice/userSlide';
 
 function App() {
    useEffect(()=>{
-      let storageData=localStorage.getItem('access_token')
-      if(storageData && isJsonString(storageData)){
-         storageData =JSON.parse(storageData)
-         const decoded=jwtDecode(storageData)
+      const {storageData, decoded}=handleDecode()
          if(decoded?.id){
             handleGetDetailUser(decoded?.id,storageData)
          }
-      }
-      console.log(storageData)
    },[])
    
   const dispatch = useDispatch()
@@ -86,7 +81,31 @@ function App() {
       const res = await UseService.getDetailUser(id, token)
       dispatch(updateUser({...res?.data,access_token:token}))
   }
+
+  const handleDecode = () =>{
+    let storageData=localStorage.getItem('access_token')
+    let decoded={}
+      if(storageData && isJsonString(storageData)){
+         storageData =JSON.parse(storageData)
+         decoded=jwtDecode(storageData)
+      }
+      return {decoded, storageData}
+  }
   
+  UseService.axiosJWT.interceptors.request.use(async (config) => {
+    const currentTime = new Date();
+    const { decoded } = handleDecode();
+    if (decoded?.exp < currentTime.getTime() / 1000) {
+      const data = await UseService.refreshToken();
+      localStorage.setItem('access_token', data.access_token); // Lưu token mới vào localStorage
+      config.headers['token'] = `Bearer ${data.access_token}`;
+    }
+    return config;
+  }, (error) => {
+    return Promise.reject(error);
+  });
+  
+
 
   const fetchAPI = async () => {
     try {
