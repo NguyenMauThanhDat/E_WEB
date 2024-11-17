@@ -65,7 +65,7 @@ import { isJsonString } from './utils';
 //import {isJsonString} from './utils'
 import { jwtDecode } from 'jwt-decode';
 import * as UseService from './services/UserService';
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import { updateUser } from './redux/slice/userSlide';
 
 function App() {
@@ -77,6 +77,7 @@ function App() {
    },[])
    
   const dispatch = useDispatch()
+  const user=useSelector((state)=>state.user)
   const handleGetDetailUser = async (id, token) => {
       const res = await UseService.getDetailUser(id, token)
       dispatch(updateUser({...res?.data,access_token:token}))
@@ -137,11 +138,13 @@ function App() {
         <Routes>
           {routes.map((route) => {
             const Page = route.page;
+            const isCheckAuth = !route.isPrivate || user.isAdmin
             const Layout = route.isShowHeader ? DefaultComponent : React.Fragment;
             return (
+              
               <Route
                 key={route.path}
-                path={route.path}
+                path={isCheckAuth?route.path:undefined}
                 element={
                   <Layout>
                     <Page />

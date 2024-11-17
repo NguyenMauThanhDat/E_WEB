@@ -11,7 +11,8 @@ import {
 import { StarFilled } from "@ant-design/icons";
 import { WrapperTextSell } from "./style";
 
-const CardComponent = () => {
+const CardComponent = (props) => {
+  const {countInStock, description, image, name, price, rating, type, selled, discount} = props
   return (
     <WrapperCardStyle
       hoverable
@@ -26,17 +27,17 @@ const CardComponent = () => {
       }
     >
       {/* <Meta title="Europe Street beat" description="www.instagram.com" /> */}
-      <StyleNameProduct>Quan ao</StyleNameProduct>
+      <StyleNameProduct>{name}</StyleNameProduct>
       <WrapperReportText>
         <span style={{marginRight:'4px'}}>
-          <span>4.56 </span>
+          <span>{rating}</span>
           <StarFilled style={{ fontSize: "10px", color: "yellow" }} />
         </span>
-        <WrapperTextSell> | Da ban 1000+</WrapperTextSell>
+        <WrapperTextSell> | Đã bán {selled||1000}</WrapperTextSell>
       </WrapperReportText>
       <WrapperPrice>
-        <span style={{marginRight:'8px'}}>1.000.000d</span>
-         <WrapperDiscount>-5%</WrapperDiscount>
+        <span style={{marginRight:'8px'}}>{price}</span>
+         <WrapperDiscount>{discount||5}%</WrapperDiscount>
       </WrapperPrice>
     </WrapperCardStyle>
   );

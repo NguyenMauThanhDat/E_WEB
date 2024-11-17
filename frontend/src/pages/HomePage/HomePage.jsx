@@ -9,9 +9,25 @@ import CardComponent from "../../components/CardComponent/CardComponent";
 import NavbarComponent from "../../components/NavbarComponent/NavbarComponent";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import { WrapperProduct } from "./style";
+import { useQuery } from "@tanstack/react-query";
+import * as ProductService from "../../services/ProductService";
 
 const HomePage = () => {
   const arr = ["TV", "Tu", "May", "Giat"];
+  const fetchProductAll = async () =>{
+   const res= await ProductService.getAllProduct()
+   console.log('res',res)
+   return res;
+  }
+  //const {isLoading, data:products} = useQuery(['products'], fetchProductAll, {retry:3, retryDeplay:1000})
+  const { isLoading, data: products } = useQuery({
+    queryKey: ['products'],
+    queryFn: fetchProductAll,
+    retry: 3,
+    retryDelay: 1000,
+  });
+  
+  console.log('data',products)
   return (
     <>
       <div style={{ width: "1270px", margin: "0 auto" }}>
@@ -31,14 +47,21 @@ const HomePage = () => {
         >
           <SliderComponent arrImages={[H14, H15, H16]} />
           <WrapperProduct>
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
-            <CardComponent />
+            {products?.data?.map((product)=>{
+              return (
+                <CardComponent 
+                key={product._id} 
+                countInStock={product.countInStock} 
+                description={product.description} 
+                image={product.image}
+                 name={product.name}
+                 price={product.price}
+                 rating={product.rating} 
+                 type={product.type}
+                 selled={product.selled}
+                 discount={product.discount}/>
+              )
+            })}
           </WrapperProduct>
           <div
             style={{
