@@ -89,12 +89,12 @@ const updateUser = (id, data) => {
         });
       }
 
-      if (!data || Object.keys(data).length === 0) {
-        return resolve({
-          status: "Error",
-          message: "No data provided for update",
-        });
-      }
+      // if (!data || Object.keys(data).length === 0) {
+      //   return resolve({
+      //     status: "Error",
+      //     message: "No data provided for update",
+      //   });
+      // }
 
       const updatedUser = await User.findByIdAndUpdate(id, data, { new: true });
       console.log(updatedUser);

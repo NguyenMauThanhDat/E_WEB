@@ -3,6 +3,7 @@ import NotfoundPage from "../pages/NotfoundPage/NotfoundPage";
 import OrderPage from "../pages/OrderPage/OrderPage";
 import ProductDetailPage from "../pages/ProductDetailPage/ProductDetailPage";
 import ProductsPage from "../pages/ProductsPage/ProductsPage";
+import ProfilePage from "../pages/Profiles/ProfilesPage";
 import SignInPage from "../pages/SignInPage/SignInPage";
 import SignUpPage from "../pages/SignUpPage/SignUpPage";
 import TypeProductPage from "../pages/TypeProductPage/TypeProductPage";
@@ -41,6 +42,11 @@ export const routes =[
     {
         path:'/type',
         page: TypeProductPage,
+        isShowHeader: true,
+    },
+    {
+        path:'/profile-user',
+        page: ProfilePage,
         isShowHeader: true,
     },
     {

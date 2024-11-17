@@ -1,4 +1,4 @@
-import React, { useState }  from "react";
+import React, { useEffect, useState }  from "react";
 import { Col } from "antd";
 import Search from "antd/lib/transfer/search";
 import {
@@ -24,8 +24,10 @@ const HeaderComponent = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   console.log(user);
+  const [userName, setUserName] = useState('')
   const dispatch = useDispatch()
   const [loading, setLoading]= useState(false)
+
   const handleNavigateLogin = () => {
     navigate("/sign-in");
   };
@@ -36,10 +38,14 @@ const HeaderComponent = () => {
     setLoading(false)
   }
 
+  useEffect(() =>{
+     setUserName(user?.name)
+  },[user?.name])
+
   const content =(
     <div>
       <WrapperContentPopup onClick={handleLogout}>Dang xuat</WrapperContentPopup>
-      <WrapperContentPopup>Thong tin nguoi dung</WrapperContentPopup>
+      <WrapperContentPopup onClick={() => navigate('/profile-user')}>Thong tin nguoi dung</WrapperContentPopup>
     </div>
   )
   return (
@@ -70,13 +76,13 @@ const HeaderComponent = () => {
           {/* <Loading isLoading={Loading}> */}
           <WrapperHeaderAccount>
             <UserOutlined style={{ fontSize: "30px" }} />
-            {user?.name ? (
+            {user?.access_token ? (
               <>
                 <Popover
                   content={content}
                   trigger="click"
                 >
-                 <div style={{ cursor: "pointer" }}>{user.name}</div>
+                 <div style={{ cursor: "pointer" }}>{userName?.length ? userName :user?.email}</div>
                 </Popover>
               </>
             ) : (

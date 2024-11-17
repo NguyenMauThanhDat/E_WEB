@@ -61,3 +61,24 @@ export const logoutUser = async () => {
         );
         return res.data;
 };
+
+
+// export const updateUser = async (id, data) => {
+//     const res = await axios.put(
+//         `${process.env.REACT_APP_API_URL_BACKEND}/user/update-user/${id}`, data
+//     );
+//     return res.data;
+// };
+
+export const updateUser = async (id, data, access_token) => {
+    try {
+        const res = await axios.put(
+            `${process.env.REACT_APP_API_URL_BACKEND}/user/update-user/${id}`, 
+            data
+        );
+        return res.data;
+    } catch (error) {
+        console.error("Update Error:", error);
+        throw error;
+    }
+};
