@@ -21,6 +21,7 @@ import { resetUser } from '../../redux/slice/userSlide';
 import Loading from '../LoadingComponent/Loading'
 
 const HeaderComponent = () => {
+  // isHiddenSearch=false, isHiddenCard =false
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
   console.log(user);
@@ -44,8 +45,12 @@ const HeaderComponent = () => {
 
   const content =(
     <div>
-      <WrapperContentPopup onClick={handleLogout}>Dang xuat</WrapperContentPopup>
-      <WrapperContentPopup onClick={() => navigate('/profile-user')}>Thong tin nguoi dung</WrapperContentPopup>
+      <WrapperContentPopup onClick={handleLogout}>Đăng xuất</WrapperContentPopup>
+      <WrapperContentPopup onClick={() => navigate('/profile-user')}>Thông tin người dùng</WrapperContentPopup>
+      {user?.isAdmin && (
+      <WrapperContentPopup onClick={() => navigate('/system/admin')}>Quản lí hệ thống</WrapperContentPopup>
+      )}
+
     </div>
   )
   return (
@@ -57,11 +62,13 @@ const HeaderComponent = () => {
         justifyContent: "center",
       }}
     >
-      <WrapperHeader gutter={15}>
+      <WrapperHeader gutter={15} > 
+      {/* style={{justifyContent: isHiddenSearch&&isHiddenCard ?"space-between":"unset"}} */}
         <Col span={6}>
           <WrapperTextHeader>TSHOP</WrapperTextHeader>
         </Col>
-        <Col span={12}>
+        
+          <Col span={12}>
           <ButtonInputSearch
             size="large"
             placeholder="input search text"
@@ -69,6 +76,7 @@ const HeaderComponent = () => {
             //bordered='false'
           />
         </Col>
+
         <Col
           span={6}
           style={{ display: "flex", gap: "54px", alignItems: "center" }}
@@ -88,24 +96,24 @@ const HeaderComponent = () => {
             ) : (
               <div onClick={handleNavigateLogin} style={{ cursor: "pointer" }}>
                 <WrapperTextHeaderSmall>
-                  Dang nhap/Dang ki
+                  Đăng nhập/Đăng kí
                 </WrapperTextHeaderSmall>
                 <div>
-                  <WrapperTextHeaderSmall>Tai khoan</WrapperTextHeaderSmall>
+                  <WrapperTextHeaderSmall>Tài khoản</WrapperTextHeaderSmall>
                   <CaretDownOutlined />
                 </div>
               </div>
             )}
           </WrapperHeaderAccount>
           {/* </Loading> */}
-          <div>
+            <div>
             <div>
               <Badge count={4} size="small">
                 <ShoppingCartOutlined
                   style={{ fontSize: "40px", color: "#fff" }}
                 />
               </Badge>
-              <WrapperTextHeaderSmall>Gio hang</WrapperTextHeaderSmall>
+              <WrapperTextHeaderSmall>Giỏ hàng</WrapperTextHeaderSmall>
             </div>
           </div>
         </Col>
