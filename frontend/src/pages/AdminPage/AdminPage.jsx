@@ -2,60 +2,21 @@ import React, { useState } from 'react';
 import { AppstoreOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import HeaderComponent from '../../components/HeaderComponent/HeaderComponent';
+import AdminUser from '../../components/AdminUser/AdminUser';
+import AdminProduct from '../../components/AdminProduct/AdminProduct';
 
 const AdminPage = () => {
     const items = [
         {
-          key: 'sub1',
+          key: 'user',
           label: 'Người dùng',
           icon: <UserOutlined />,
-          children: [
-            {
-              key: '1',
-              label: 'Option 1',
-            },
-            {
-              key: '2',
-              label: 'Option 2',
-            },
-            {
-              key: '3',
-              label: 'Option 3',
-            },
-            {
-              key: '4',
-              label: 'Option 4',
-            },
-          ],
         },
         {
-          key: 'sub2',
+          key: 'product',
           label: 'Sản phẩm',
           icon: <AppstoreOutlined />,
-          children: [
-            {
-              key: '5',
-              label: 'Option 5',
-            },
-            {
-              key: '6',
-              label: 'Option 6',
-            },
-            {
-              key: 'sub3',
-              label: 'Submenu',
-              children: [
-                {
-                  key: '7',
-                  label: 'Option 7',
-                },
-                {
-                  key: '8',
-                  label: 'Option 8',
-                },
-              ],
-            },
-          ],
+          
         },
         {
           key: 'sub4',
@@ -86,10 +47,22 @@ const AdminPage = () => {
   const changeTheme = (value) => {
     setTheme(value ? 'dark' : 'light');
   };
+  
+  const renderPage = () => {
+    switch (current) {
+      case 'user':
+        return <AdminUser />; // Component được render khi chọn 'user'
+      case 'product':
+        return <AdminProduct />; // Placeholder, thay bằng component thực tế
+      default:
+        return <></>;
+    }
+  };
   const onClick = (e) => {
     console.log('click ', e);
     setCurrent(e.key);
   };
+
     return (
         <>
         <HeaderComponent isHiddenSearch isHiddenCard/>
@@ -99,14 +72,16 @@ const AdminPage = () => {
         onClick={onClick}
         style={{
           width: 256,
+          boxShadow: '1px 1px 2px #ccc',
+          height: '100vh',
         }}
         defaultOpenKeys={['sub1']}
         selectedKeys={[current]}
         mode="inline"
         items={items}
       />
-      <div style={{flex: 1}}>
-        <span>test</span>
+      <div style={{flex: 1, padding:'15px'}}>
+        {renderPage(current)}
       </div>
         </div>
     </>
