@@ -9,7 +9,8 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
-
+app.use(bodyParser.json({ limit: "100000mb" })); // 10mb là giới hạn bạn muốn đặt
+app.use(bodyParser.urlencoded({ limit: "100000mb", extended: true }));
 app.use(cors())
 app.use(bodyParser.json());
 

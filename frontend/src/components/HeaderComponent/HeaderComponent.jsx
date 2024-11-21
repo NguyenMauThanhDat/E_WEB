@@ -26,6 +26,7 @@ const HeaderComponent = () => {
   const user = useSelector((state) => state.user);
   console.log(user);
   const [userName, setUserName] = useState('')
+  const [userAvatar, setUserAvatar] = useState('')
   const dispatch = useDispatch()
   const [loading, setLoading]= useState(false)
 
@@ -41,7 +42,8 @@ const HeaderComponent = () => {
 
   useEffect(() =>{
      setUserName(user?.name)
-  },[user?.name])
+     setUserAvatar(user?.avatar)
+  },[user?.name, user?.avatar])
 
   const content =(
     <div>
@@ -83,7 +85,8 @@ const HeaderComponent = () => {
         >
           {/* <Loading isLoading={Loading}> */}
           <WrapperHeaderAccount>
-            <UserOutlined style={{ fontSize: "30px" }} />
+            {userAvatar ? (<img src={userAvatar} alt="avatar" style={{height:'30px', width:'30px', borderRadius:'50%', objectFit:'cover'}}/>) :(<UserOutlined style={{ fontSize: "30px" }} />)}
+            
             {user?.access_token ? (
               <>
                 <Popover
