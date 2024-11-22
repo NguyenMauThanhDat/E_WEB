@@ -13,3 +13,4 @@ export const createProduct = async (data) => {
     );
     return res.data;
 };
+

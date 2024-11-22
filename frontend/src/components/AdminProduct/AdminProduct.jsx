@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { WrapperHeader } from "./style";
 import { Button, Modal, Form, Input, Checkbox, Descriptions } from "antd";
 import TableComponent from "../TableComponent/TableComponent";
@@ -9,6 +9,7 @@ import { getBase64 } from "../../utils";
 import * as ProductService from '../../services/ProductService'
 import { useMutationHooks } from "../../hooks/UserMutationHooks";
 import * as message from '../../components/Message/Message';
+import { useQuery } from "@tanstack/react-query";
 
 
 const AdminProduct = () => {
@@ -22,16 +23,60 @@ const AdminProduct = () => {
     type: "",
     countInStock: "",
   });
+
   const mutation = useMutationHooks(
     (data) =>{
       const { name, price, descriptions,rating, image, type,countInStock:countInStock}= data
       ProductService.createProduct({name, price, descriptions,rating, image, type,countInStock})
     } 
 )
+
+const getAllProducts = async () =>{
+   const res= await ProductService.getAllProduct()
+   return res;
+}
+const {isLoading:isLoadingProducts, data:products} = useQuery({queryKey:['products'],queryFn:getAllProducts})
+const renderAction = () =>{
+  return(
+    <div>
+      <DeleteOutlined style={{color:'red', fontSize:'18px', cursor:'pointer'}} />
+      <EditOutlined style={{color:'yellow', fontSize:'18px', cursor:'pointer'}}/>
+    </div>
+  )
+}
+const columns = [
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    render: (text) => <a>{text}</a>,
+  },
+  {
+    title: 'Price',
+    dataIndex: 'price',
+  },
+  {
+    title: 'Rating',
+    dataIndex: 'rating',
+  },
+  {
+    title: 'Type',
+    dataIndex: 'type',
+  },
+  {
+    title: 'Action',
+    dataIndex: 'action',
+    render: renderAction,
+  }
+];
+const dataTable = products?.data?.length && products?.data?.map((product) => {
+  return {...product,key: product._id}
+})
   const handleOk = () => {
     onFinish();
   };
+
   const {data, isLoading, isSuccess, isError} =mutation
+
   useEffect(() => {
     if(isSuccess&&data?.status==='OK'){
       message.success()
@@ -40,6 +85,9 @@ const AdminProduct = () => {
       message.error()
     }
   },[isSuccess])
+
+  const [form] =Form.useForm()
+
   const handleCancel = () => {
     setIsModalOpen(false);
     setStateProduct({name: "",
@@ -49,17 +97,21 @@ const AdminProduct = () => {
       image: "",
       type: "",
       countInStock: ""})
+    form.resetFields();
   };
+  
   const onFinish = () => {
     mutation.mutate(stateProduct)
     console.log("Success:", stateProduct);
   };
+
   const handleOnChange = (e) => {
     setStateProduct({
       ...stateProduct,
       [e.target.name]: e.target.value,
     });
   };
+
   const handleOnchangeAvatar = async ({ fileList }) => {
     const file = fileList[0];
     if (file && file.originFileObj) {
@@ -89,18 +141,18 @@ const AdminProduct = () => {
         </Button>
       </div>
       <div style={{ marginTop: "20px" }}>
-        <TableComponent />
+        <TableComponent columns={columns} data={dataTable} />
       </div>
       <Modal
         title="Tạo sản phẩm"
         open={isModalOpen}
         onCancel={handleCancel}
-        okText=""
+        footer={null}
       >
         <Form
           name="basic"
           labelCol={{
-            span: 8,
+            span: 6,
           }}
           wrapperCol={{
             span: 16,
@@ -108,11 +160,12 @@ const AdminProduct = () => {
           style={{
             maxWidth: 600,
           }}
-          initialValues={{
-            remember: true,
-          }}
+          // initialValues={{
+          //   remember: false,
+          // }}
           onFinish={onFinish}
           autoComplete="off"
+          form={form}
         >
           <Form.Item
             label="Name"
@@ -228,7 +281,7 @@ const AdminProduct = () => {
           )}
           </Form.Item>
 
-          <Form.Item label={null}>
+          <Form.Item wrapperCol={{offset:20, span:16}}>
             <Button type="primary" htmlType="submit">
               Submit
             </Button>
