@@ -27,14 +27,14 @@ const authMiddleWare = (req, res, next) => {
     }
 
     //const { payload } = user;
-    if (!user?.isAdmin) {
+    if (user?.isAdmin) {
       next();
     } else {
       return res.status(403).json({
         message: "Access denied",
         status: "ERROR",
       });
-    }
+     }
   });
 };
 
