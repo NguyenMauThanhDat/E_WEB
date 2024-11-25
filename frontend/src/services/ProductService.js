@@ -33,3 +33,14 @@ export const updateProduct = async (id, access_token, data) => {
     return res.data;
 };
 
+export const deleteProduct = async (id, access_token) => {
+    const res = await axios.delete(
+        `${process.env.REACT_APP_API_URL_BACKEND}/product/delete/${id}`,{
+            headers: {
+                Authorization: `Bearer ${access_token}`, 
+            },
+        }
+    );
+    return res.data;
+};
+

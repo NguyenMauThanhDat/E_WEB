@@ -12,6 +12,7 @@ import * as message from '../../components/Message/Message';
 import { useQuery } from "@tanstack/react-query";
 import DrawerComponent from "../DrawerComponent/DrawerComponent";
 import {useSelector} from 'react-redux'
+import ModalComponent from '../ModalComponent/ModalComponent';
 
 
 const AdminProduct = () => {
@@ -20,6 +21,7 @@ const AdminProduct = () => {
   const [rowSelected, setRowSelected] = useState('');
   const user=useSelector((state)=>state?.user)
   const [isOpenDrawer, setIsOpenDrawer] = useState(false)
+  const [isModalOpenDelete, setIsModalOpenDelete] = useState(false)
   const [stateProduct, setStateProduct] = useState({
     name: "",
     price: "",
@@ -48,9 +50,15 @@ const AdminProduct = () => {
 
 const mutationUpdate = useMutationHooks(
   (data) =>{
-    console.log(data)
     const { id, token, ...rests}= data
-   const res= ProductService.updateProduct(id, token, rests)
+   const res= ProductService.updateProduct(id, token, {...rests})
+   return res
+  } 
+)
+const mutationDelete = useMutationHooks(
+  (data) =>{
+    const { id, token}= data
+   const res= ProductService.deleteProduct(id, token)
    return res
   } 
 )
@@ -93,18 +101,18 @@ useEffect(()=>{
    }
 }, [rowSelected])
 
-console.log('stateProduct', stateProductDetails);
 const handleDetailsProduct = () => {
   if (rowSelected) {
     fetchGetDetailsProduct(rowSelected); // Truyền rowSelected
   } 
   setIsOpenDrawer(true);
 };
-const {isLoading:isLoadingProducts, data:products} = useQuery({queryKey:['products'],queryFn:getAllProducts})
+const queryProduct = useQuery({queryKey:['products'],queryFn:getAllProducts})
+const {isLoading:isLoadingProducts, data:products} = queryProduct
 const renderAction = () =>{
   return(
     <div>
-      <DeleteOutlined style={{color:'red', fontSize:'18px', cursor:'pointer'}} />
+      <DeleteOutlined style={{color:'red', fontSize:'18px', cursor:'pointer'}} onClick={()=>setIsModalOpenDelete(true)}/>
       <EditOutlined style={{color:'yellow', fontSize:'18px', cursor:'pointer'}} onClick={handleDetailsProduct}/>
     </div>
   )
@@ -142,6 +150,8 @@ const dataTable = products?.data?.length && products?.data?.map((product) => {
 
   const {data, isLoading, isSuccess, isError} =mutation
   const {data: dataUpdated, isSuccess:isSuccessUpdated, isError:isErrorUpdated} =mutationUpdate
+  const {data: dataDeleted, isSuccess:isSuccessDeleted, isError:isErrorDeleted} =mutationDelete
+
 
   useEffect(() => {
     if(isSuccess&&data?.status==='OK'){
@@ -159,6 +169,17 @@ const dataTable = products?.data?.length && products?.data?.map((product) => {
       message.error('Cập nhật sản phẩm thất bại!');
     }
   }, [isSuccessUpdated, isErrorUpdated, dataUpdated]);
+  
+ useEffect(() => {
+  if (isSuccessDeleted && dataDeleted?.status === "OK") {
+    message.success("Xóa sản phẩm thành công!");
+    handleCancelDelete();
+  } else if (isErrorDeleted) {
+    const errorMsg = dataDeleted?.message || "Xóa sản phẩm thất bại!";
+    message.error(errorMsg);
+  }
+}, [isSuccessDeleted, isErrorDeleted, dataDeleted]);
+
 
   const handleCancel = () => {
     setIsModalOpen(false);
@@ -171,10 +192,25 @@ const dataTable = products?.data?.length && products?.data?.map((product) => {
       countInStock: ""})
     form.resetFields();
   };
+
+  const handleCancelDelete = () =>{
+    setIsModalOpenDelete(false)
+  }
+
+ const handleDeleteProduct = () =>{
+    mutationDelete.mutate({id: rowSelected, token: user?.access_token},{
+      onSettled: () =>{
+        queryProduct.refetch()
+      }
+    })
+ }
   
   const onFinish = () => {
-    mutation.mutate(stateProduct)
-    console.log("Success:", stateProduct);
+    mutation.mutate(stateProduct,{
+      onSettled: () =>{
+        queryProduct.refetch()
+      }
+     })
   };
 
   const handleOnChange = (e) => {
@@ -214,10 +250,13 @@ const dataTable = products?.data?.length && products?.data?.map((product) => {
       }
     }
   };
-  console.log(user)
 
   const onUpdateProduct = () =>{
-     mutationUpdate.mutate({id:rowSelected,token:user?.access_token, ...stateProductDetails})
+     mutationUpdate.mutate({id:rowSelected,token:user?.access_token, ...stateProductDetails},{
+      onSettled: () =>{
+        queryProduct.refetch()
+      }
+     })
   }
   
   return (
@@ -243,7 +282,7 @@ const dataTable = products?.data?.length && products?.data?.map((product) => {
     };
   }}/>
       </div>
-      <Modal
+      <ModalComponent
         title="Tạo sản phẩm"
         open={isModalOpen}
         onCancel={handleCancel}
@@ -387,8 +426,8 @@ const dataTable = products?.data?.length && products?.data?.map((product) => {
             </Button>
           </Form.Item>
         </Form>
-      </Modal>
-      <DrawerComponent title="Chi tiết sản phẩm"  isOpen={isOpenDrawer} onClose={()=>setIsOpenDrawer(false)} width="90vw"> 
+      </ModalComponent>
+      <DrawerComponent title="Chi tiết sản phẩm"  isOpen={isOpenDrawer} onClose={()=>setIsOpenDrawer(false)} onOk={handleDeleteProduct} width="90vw"> 
       <Form
           name="Chi tiết sản phẩm"
           labelCol={{
@@ -526,6 +565,14 @@ const dataTable = products?.data?.length && products?.data?.map((product) => {
         </Form>
         
       </DrawerComponent>
+      <ModalComponent
+        title="Xóa sản phẩm"
+        open={isModalOpenDelete}
+        onCancel={handleCancelDelete}
+        onOk={handleDeleteProduct}
+      >
+        <div>Bạn có chắc chắn muốn xóa không?</div>
+      </ModalComponent>
     </div>
   );
 };
