@@ -39,6 +39,37 @@ export const getDetailUser = async (id, access_token) => {
     }
 };
 
+export const getAllUser = async (access_token) => {
+    try {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL_BACKEND}/user/getAll`, {
+            headers: {
+                Authorization: `Bearer ${access_token}`, 
+            },
+        });
+
+        return res.data;
+    } catch (error) {
+        console.error("Lỗi khi lấy thông tin người dùng:", error.message);
+        throw error; 
+    }
+};
+
+export const deleteUser = async (id, access_token) => {
+    try {
+        const res = await axiosJWT.delete(`${process.env.REACT_APP_API_URL_BACKEND}/user/delete-user/${id}`, {
+            headers: {
+                Authorization: `Bearer ${access_token}`, 
+            },
+        });
+
+        return res.data;
+    } catch (error) {
+        console.error("Lỗi khi lấy thông tin người dùng:", error.message);
+        throw error; 
+    }
+};
+
+
 export const refreshToken = async () => {
     try {
         console.log(process.env.REACT_APP_API_URL_BACKEND);
