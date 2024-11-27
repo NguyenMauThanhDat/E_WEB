@@ -56,6 +56,13 @@ const mutationDelete = useMutationHooks(
    return res
   } 
 )
+const mutationDeleteMany = useMutationHooks(
+  (data) =>{
+    const { token, ...ids}= data
+   const res= UserService.deleteManyUser(ids, token)
+   return res
+  } 
+)
 
 const getAllUsers = async () =>{
    const res= await UserService.getAllUser()
@@ -229,26 +236,38 @@ const dataTable = users?.data?.length && users?.data?.map((user) => {
 
   const {data: dataUpdated, isSuccess:isSuccessUpdated, isError:isErrorUpdated} =mutationUpdate
   const {data: dataDeleted, isSuccess:isSuccessDeleted, isError:isErrorDeleted} =mutationDelete
+  const {data: dataDeletedMany, isSuccess:isSuccessDeletedMany, isError:isErrorDeletedMany} =mutationDeleteMany
+
 
 
  
   useEffect(() => {
     if (isSuccessUpdated && dataUpdated?.status === 'OK') {
-      message.success('Cập nhật sản phẩm thành công!');
+      message.success('Cập nhật người dùng thành công!');
     } else if (isErrorUpdated) {
-      message.error('Cập nhật sản phẩm thất bại!');
+      message.error('Cập nhật người dùng thất bại!');
     }
   }, [isSuccessUpdated, isErrorUpdated, dataUpdated]);
   
  useEffect(() => {
   if (isSuccessDeleted && dataDeleted?.status === "OK") {
-    message.success("Xóa sản phẩm thành công!");
+    message.success("Xóa người dùng thành công!");
     handleCancelDelete();
   } else if (isErrorDeleted) {
-    const errorMsg = dataDeleted?.message || "Xóa sản phẩm thất bại!";
+    const errorMsg = dataDeleted?.message || "Xóa người dùng thất bại!";
     message.error(errorMsg);
   }
 }, [isSuccessDeleted, isErrorDeleted, dataDeleted]);
+
+useEffect(() => {
+  if (isSuccessDeletedMany && dataDeletedMany?.status === "OK") {
+    message.success("Xóa người dùng thành công!");
+    handleCancelDelete();
+  } else if (isErrorDeletedMany) {
+    const errorMsg = dataDeletedMany?.message || "Xóa người dùng thất bại!";
+    message.error(errorMsg);
+  }
+}, [isSuccessDeletedMany, isErrorDeletedMany, dataDeletedMany]);
 
   const handleCancelDelete = () =>{
     setIsModalOpenDelete(false)
@@ -261,6 +280,14 @@ const dataTable = users?.data?.length && users?.data?.map((user) => {
       }
     })
  }
+
+ const handleDeleteManyUser = (ids) => {
+  mutationDeleteMany.mutate({ids, token: user?.access_token},{
+    onSettled: () =>{
+      queryUser.refetch()
+    }
+  })
+}
   
   const handleOnChangeDetails = (e) => {
     setStateUserDetails({
@@ -305,7 +332,7 @@ const dataTable = users?.data?.length && users?.data?.map((user) => {
     <div>
       <WrapperHeader>Quản lí người dùng</WrapperHeader>
       <div style={{ marginTop: "20px" }}>
-        <TableComponent columns={columns} data={dataTable} onRow={(record, rowIndex) => {
+        <TableComponent handleDeleteMany={handleDeleteManyUser} columns={columns} data={dataTable} onRow={(record, rowIndex) => {
     return {
       onClick: (event) => {setRowSelected(record._id)}, 
     };

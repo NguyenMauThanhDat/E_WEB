@@ -170,6 +170,21 @@ const getDetailUser = (id) => {
   });
 };
 
+const deleteManyUser = (ids) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await User.deleteMany({_id:ids});
+
+      resolve({
+        status: "OK",
+        message: "Success",
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   createUser,
   loginUser,
@@ -177,4 +192,5 @@ module.exports = {
   deleteUser,
   getAllUser,
   getDetailUser,
+  deleteManyUser,
 };

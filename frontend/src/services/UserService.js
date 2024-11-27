@@ -113,3 +113,14 @@ export const updateUser = async (id, data, access_token) => {
         throw error;
     }
 };
+
+export const deleteManyUser = async (data, access_token) => {
+    const res = await axios.post(
+        `${process.env.REACT_APP_API_URL_BACKEND}/user/delete-many`,data,{
+            headers: {
+                Authorization: `Bearer ${access_token}`, 
+            },
+        }
+    );
+    return res.data;
+};

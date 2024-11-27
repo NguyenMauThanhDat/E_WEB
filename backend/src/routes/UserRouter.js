@@ -13,6 +13,8 @@ router.get('/getAll',userController.getAllUser)
 //router.get('/get-detail/:id',authUserMiddleWare,userController.getDetailUser)
 router.get('/get-detail/:id',userController.getDetailUser)
 router.post('/refresh-token',userController.refreshToken)
+router.post('/delete-many',authMiddleWare, userController.deleteMany)
+
 
 
 

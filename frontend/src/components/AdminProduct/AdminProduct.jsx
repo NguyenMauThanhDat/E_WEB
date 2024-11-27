@@ -66,6 +66,14 @@ const mutationDelete = useMutationHooks(
   } 
 )
 
+const mutationDeleteMany = useMutationHooks(
+  (data) =>{
+    const { token, ...ids}= data
+   const res= ProductService.deleteManyProduct(ids, token)
+   return res
+  } 
+)
+
 const getAllProducts = async () =>{
    const res= await ProductService.getAllProduct()
    return res;
@@ -110,6 +118,15 @@ const handleDetailsProduct = () => {
   } 
   setIsOpenDrawer(true);
 };
+
+const handleDeleteManyProduct = (ids) => {
+  mutationDeleteMany.mutate({ids, token: user?.access_token},{
+    onSettled: () =>{
+      queryProduct.refetch()
+    }
+  })
+}
+
 const queryProduct = useQuery({queryKey:['products'],queryFn:getAllProducts})
 const {isLoading:isLoadingProducts, data:products} = queryProduct
 const renderAction = () =>{
@@ -274,6 +291,8 @@ const dataTable = products?.data?.length && products?.data?.map((product) => {
   const {data, isLoading, isSuccess, isError} =mutation
   const {data: dataUpdated, isSuccess:isSuccessUpdated, isError:isErrorUpdated} =mutationUpdate
   const {data: dataDeleted, isSuccess:isSuccessDeleted, isError:isErrorDeleted} =mutationDelete
+  const {data: dataDeletedMany, isSuccess:isSuccessDeletedMany, isError:isErrorDeletedMany} =mutationDeleteMany
+
 
 
   useEffect(() => {
@@ -302,6 +321,16 @@ const dataTable = products?.data?.length && products?.data?.map((product) => {
     message.error(errorMsg);
   }
 }, [isSuccessDeleted, isErrorDeleted, dataDeleted]);
+
+useEffect(() => {
+  if (isSuccessDeletedMany && dataDeletedMany?.status === "OK") {
+    message.success("Xóa sản phẩm thành công!");
+    handleCancelDelete();
+  } else if (isErrorDeletedMany) {
+    const errorMsg = dataDeletedMany?.message || "Xóa sản phẩm thất bại!";
+    message.error(errorMsg);
+  }
+}, [isSuccessDeletedMany, isErrorDeletedMany, dataDeletedMany]);
 
 
   const handleCancel = () => {
@@ -399,7 +428,7 @@ const dataTable = products?.data?.length && products?.data?.map((product) => {
         </Button>
       </div>
       <div style={{ marginTop: "20px" }}>
-        <TableComponent columns={columns} data={dataTable} onRow={(record, rowIndex) => {
+        <TableComponent handleDeleteManyProduct={handleDeleteManyProduct} columns={columns} data={dataTable} onRow={(record, rowIndex) => {
     return {
       onClick: (event) => {setRowSelected(record._id)}, 
     };
