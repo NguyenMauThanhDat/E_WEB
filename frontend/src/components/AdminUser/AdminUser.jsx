@@ -15,6 +15,7 @@ import {useSelector} from 'react-redux'
 import ModalComponent from '../ModalComponent/ModalComponent';
 
 
+
 const AdminUser = () => {
   const [form] =Form.useForm()
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,18 +26,20 @@ const AdminUser = () => {
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef(null);
-  const [stateUser, setStateUser] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    isAdmin:false,
+  // const [stateUser, setStateUser] = useState({
+  //   name: "",
+  //   email: "",
+  //   phone: "",
+  //   isAdmin:false,
     
-  });
+  // });
   const [stateUserDetails, setStateUserDetails] = useState({
     name: "",
     email: "",
     phone: "",
     isAdmin:false,
+    avatar:'',
+    address:''
   });
 
  
@@ -78,6 +81,8 @@ const fetchGetDetailsUser = async (rowSelected) =>{
       email: res?.data?.email,
       phone: res?.data?.phone,
       isAdmin: res?.data?.isAdmin,
+      address: res?.data?.address,
+      avatar: res?.data?.avatar 
       })
     }
   } catch(error) {
@@ -199,6 +204,12 @@ const columns = [
     sorter : (a,b)=> a.email.length - b.email.length,
     ...getColumnSearchProps('email')
     },
+    {
+      title: 'Address',
+      dataIndex: 'address',
+      sorter : (a,b)=> a.address.length - b.address.length,
+      ...getColumnSearchProps('address')
+      },
   {
     title: 'Admin',
     dataIndex: 'isAdmin',
@@ -296,7 +307,7 @@ useEffect(() => {
     });
   };
 
-  // const handleOnchangeAvatar = async ({ fileList }) => {
+  // const handleOnchangeAvatarDetails = async ({ fileList }) => {
   //   const file = fileList[0];
   //   if (file && file.originFileObj) {
   //     try {
@@ -308,17 +319,17 @@ useEffect(() => {
   //   }
   // };
 
-  // const handleOnchangeAvatarDetails = async ({ fileList }) => {
-  //   const file = fileList[0];
-  //   if (file && file.originFileObj) {
-  //     try {
-  //       const preview = await getBase64(file.originFileObj);
-  //       setStateUserDetails({...stateUserDetails,image: preview}); // Set ảnh lên state
-  //     } catch (error) {
-  //       console.error("Lỗi khi xử lý file ảnh:", error);
-  //     }
-  //   }
-  // };
+  const handleOnchangeAvatarDetails = async ({ fileList }) => {
+    const file = fileList[0];
+    if (file && file.originFileObj) {
+      try {
+        const preview = await getBase64(file.originFileObj);
+        setStateUserDetails({...stateUserDetails,avatar: preview}); // Set ảnh lên state
+      } catch (error) {
+        console.error("Lỗi khi xử lý file ảnh:", error);
+      }
+    }
+  };
 
   const onUpdateUser = () =>{
      mutationUpdate.mutate({id:rowSelected,token:user?.access_token, ...stateUserDetails},{
@@ -406,17 +417,34 @@ useEffect(() => {
             />
           </Form.Item>
 
-        {/* <Form.Item
-            label="Image"
-            name="image"
+          <Form.Item
+            label="Address"
+            name="address"
+            rules={[
+              {
+                required: true,
+                message: "Please input your address!",
+              },
+            ]}
+          >
+            <InputComponent
+              value={stateUserDetails.address}
+              onChange={handleOnChangeDetails}
+              name="address"
+            />
+          </Form.Item>
+
+        <Form.Item
+            label="Avatar"
+            name="avatar"
           >
             <WrapperUploadFile onChange={handleOnchangeAvatarDetails} maxCount={1}>
               <Button>Select File</Button>
             </WrapperUploadFile>
-            {stateUserDetails?.image&&(
-            <img src={stateUserDetails?.image} style={{height:'60px', width:'60px', borderRadius:'50%', objectFit:'cover', marginLeft:'10px'}} alt='avatar'/>
+            {stateUserDetails?.avatar&&(
+            <img src={stateUserDetails?.avatar} style={{height:'60px', width:'60px', borderRadius:'50%', objectFit:'cover', marginLeft:'10px'}} alt='avatar'/>
           )}
-          </Form.Item> */}
+          </Form.Item>
 
           <Form.Item wrapperCol={{offset:20, span:16}}>
             <Button type="primary" htmlType="submit">
