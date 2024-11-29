@@ -13,6 +13,8 @@ import { useQuery } from "@tanstack/react-query";
 import DrawerComponent from "../DrawerComponent/DrawerComponent";
 import {useSelector} from 'react-redux'
 import ModalComponent from '../ModalComponent/ModalComponent';
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 
 
@@ -91,6 +93,33 @@ const fetchGetDetailsUser = async (rowSelected) =>{
 }
   
 }
+const exportToExcel = () => {
+  if (!dataTable || dataTable.length === 0) {
+    message.error("Không có dữ liệu để xuất!");
+    return;
+  }
+
+  // Định nghĩa dữ liệu và tiêu đề cột
+  const dataExport = dataTable.map((user) => ({
+    Name: user.name || "",
+    Email: user.email || "",
+    Address: user.address || "",
+    Phone: user.phone || "",
+    Admin: user.isAdmin,
+  }));
+
+  // Tạo workbook và worksheet
+  const worksheet = XLSX.utils.json_to_sheet(dataExport);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Users");
+
+  // Tạo file và lưu xuống
+  const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+  const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+  saveAs(blob, "UserList.xlsx");
+
+  message.success("Xuất file Excel thành công!");
+};
 
 useEffect(() => {
   if (stateUserDetails) {
@@ -342,6 +371,11 @@ useEffect(() => {
   return (
     <div>
       <WrapperHeader>Quản lí người dùng</WrapperHeader>
+      <div style={{ marginBottom: "20px" }}>
+      <Button type="primary" icon={<PlusOutlined />} onClick={exportToExcel}>
+        Xuất Excel
+      </Button>
+    </div>
       <div style={{ marginTop: "20px" }}>
         <TableComponent handleDeleteMany={handleDeleteManyUser} columns={columns} data={dataTable} onRow={(record, rowIndex) => {
     return {
