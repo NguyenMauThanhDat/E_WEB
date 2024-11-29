@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TypeProduct from "../../components/TypeProduct/TypeProduct";
 import { WrapperButtonMore, WrapperTypeProduct } from "./style";
 import SliderComponent from "../../components/SliderComponent/SliderComponent";
@@ -11,21 +11,38 @@ import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import { WrapperProduct } from "./style";
 import { useQuery } from "@tanstack/react-query";
 import * as ProductService from "../../services/ProductService";
+import { useSelector } from "react-redux";
 
 const HomePage = () => {
   const arr = ["TV", "Tu", "May", "Giat"];
-  const fetchProductAll = async () =>{
-   const res= await ProductService.getAllProduct()
-   console.log('res',res)
-   return res;
+  const searchProduct = useSelector((state)=>state?.product?.search)
+  const [stateProducts, setStateProducts]=useState([])
+  const refSearch = useRef()
+  const fetchProductAll = async (search) =>{
+   const res= await ProductService.getAllProduct(search)
+   if(search.length>0){
+    setStateProducts(res?.data)
+   }else{
+    return res;
+   }
   }
   //const {isLoading, data:products} = useQuery(['products'], fetchProductAll, {retry:3, retryDeplay:1000})
+  useEffect(()=>{
+     fetchProductAll(searchProduct)
+  },[searchProduct])
+  
   const { isLoading, data: products } = useQuery({
     queryKey: ['products'],
     queryFn: fetchProductAll,
     retry: 3,
     retryDelay: 1000,
   });
+
+  useEffect(()=>{
+     if(products?.data?.length>0){
+        setStateProducts(products?.data)
+     }
+  },[products])
   
   console.log('data',products)
   return (
@@ -47,7 +64,7 @@ const HomePage = () => {
         >
           <SliderComponent arrImages={[H14, H15, H16]} />
           <WrapperProduct>
-            {products?.data?.map((product)=>{
+            {stateProducts?.map((product)=>{
               return (
                 <CardComponent 
                 key={product._id} 

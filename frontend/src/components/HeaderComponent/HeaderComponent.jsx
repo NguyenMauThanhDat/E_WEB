@@ -19,6 +19,7 @@ import { Button, ConfigProvider, Flex, Popover } from "antd";
 import * as UseService from '../../services/UserService'
 import { resetUser } from '../../redux/slice/userSlide';
 import Loading from '../LoadingComponent/Loading'
+import { searchProduct } from "../../redux/slice/productSlice";
 
 const HeaderComponent = () => {
   // isHiddenSearch=false, isHiddenCard =false
@@ -29,6 +30,7 @@ const HeaderComponent = () => {
   const [userAvatar, setUserAvatar] = useState('')
   const dispatch = useDispatch()
   const [loading, setLoading]= useState(false)
+  const [search, setSearch] = useState('')
 
   const handleNavigateLogin = () => {
     navigate("/sign-in");
@@ -55,6 +57,12 @@ const HeaderComponent = () => {
 
     </div>
   )
+  const onSearch = (e) =>{
+    setSearch(e.target.value)
+    dispatch(searchProduct(e.target.value))
+  }
+
+
   return (
     <div
       style={{
@@ -75,6 +83,7 @@ const HeaderComponent = () => {
             size="large"
             placeholder="input search text"
             textButton="Tim kiem"
+            onChange={onSearch}
             //bordered='false'
           />
         </Col>
