@@ -16,11 +16,15 @@ import { useSelector } from "react-redux";
 const HomePage = () => {
   const arr = ["TV", "Tu", "May", "Giat"];
   const searchProduct = useSelector((state)=>state?.product?.search)
+  const [limit, setLimit]=useState(5)
   const [stateProducts, setStateProducts]=useState([])
   const refSearch = useRef()
-  const fetchProductAll = async (search) =>{
-   const res= await ProductService.getAllProduct(search)
-   if(search.length>0){
+
+  const fetchProductAll = async (context) =>{
+    const search=''
+    const limit = context?.queryKey?.[1] || 5;
+   const res= await ProductService.getAllProduct(search,limit)
+   if(search.length>0||refSearch.current){
     setStateProducts(res?.data)
    }else{
     return res;
@@ -31,11 +35,15 @@ const HomePage = () => {
      fetchProductAll(searchProduct)
   },[searchProduct])
   
-  const { isLoading, data: products } = useQuery({
-    queryKey: ['products'],
-    queryFn: fetchProductAll,
+  const { isLoading, data: products, isPreviousData } = useQuery({
+    queryKey: ['products', limit, searchProduct],
+    queryFn: ({ queryKey }) => {
+      const [, limit, search] = queryKey;
+      return ProductService.getAllProduct(search, limit);
+    },
     retry: 3,
     retryDelay: 1000,
+    keepPreviousData:true
   });
 
   useEffect(()=>{
@@ -89,16 +97,18 @@ const HomePage = () => {
             }}
           >
             <WrapperButtonMore
-              textButton="Xem them"
+              textButton={isPreviousData?"Load more":'Xem thêm'}
               type="outline"
               styleButton={{
                 border: "1px solid rgb(11,116,229)",
-                color: "rgb(11,116,229 ",
+                color: `${products?.total===products?.data?.length ? '#ccc' : 'rgb(11,116,229)'}`,
                 width: "240px",
                 height: "38px",
                 borderRadius: "4px",
               }}
-              styleTextButton={{ fontWeight: 500 }}
+              disabled={products?.total===products?.data?.length||products?.totalPage===1}
+              styleTextButton={{ fontWeight: 500, color: products?.total===products?.data?.length&&'#fff'}}
+              onClick={() => setLimit((prev) => prev + 5)}
             />
           </div>
         </div>
