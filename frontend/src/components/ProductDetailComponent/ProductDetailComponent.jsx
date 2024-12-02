@@ -1,5 +1,6 @@
-import React from "react";
-import { Row, Col, Image, InputNumber, Button } from "antd";
+import React, { useState } from "react";
+import * as ProductService from '../../services/ProductService'
+import { Row, Col, Image, InputNumber, Button, Rate } from "antd";
 import H14 from "../../assets/image/H14.png";
 import H15 from "../../assets/image/H15.png";
 import {
@@ -16,13 +17,49 @@ import {
 } from "./style";
 import { MinusOutlined, PlusOutlined, StarFilled } from "@ant-design/icons";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
+import { useQuery } from "@tanstack/react-query";
+import {useSelector } from "react-redux"
 
-const ProductDetailComponent = () => {
-  const onChange = () => {};
+const ProductDetailComponent = ({idProduct}) => {
+  const [numProduct, setNumProduct] =useState(1)
+  const user =useSelector((state)=>state.user)
+  const onChange = (value) => {
+       setNumProduct(Number(value))
+  };
+  const fetchGetDetailsProduct = async (id) => {
+    try {
+      const res = await ProductService.getDetailsProduct(id);
+      return res.data;
+    } catch (error) {
+      console.error("Error fetching product details:", error);
+      return null;
+    }
+  };
+  
+  const { isLoading, data: productDetails } = useQuery({
+    queryKey: ['product-details', idProduct],
+    queryFn: ({ queryKey }) => {
+      const [, id] = queryKey; // Trích xuất id từ queryKey
+      return fetchGetDetailsProduct(id);
+    },
+    enabled: !!idProduct, // Chỉ thực thi khi idProduct tồn tại
+    retry: 3,
+    retryDelay: 1000,
+    keepPreviousData: true,
+  });
+  console.log('product-detail',productDetails)
+
+  const handleChangeCount = (type) =>{
+    if(type==='increase'){
+       setNumProduct(numProduct + 1)
+    } else{
+      setNumProduct(numProduct - 1)
+    }
+  }
   return (
     <Row style={{ padding: "16px", background: "#fff" }}>
       <Col span={10}>
-        <Image src={H14} alt="Image product" preview="false" />
+        <Image src={productDetails?.image} alt="Image product" preview="false" />
         <Row style={{ paddingTop: "10px", justifyContent: "space-between" }}>
           <WrapperStyledColImage span={4}>
             <WrapperStyledImageSmall src={H15} alt="small" preview="false" />
@@ -43,38 +80,38 @@ const ProductDetailComponent = () => {
       </Col>
       <Col span={14}>
         <WrapperNameProduct>
-          Ao nam nh unh trn thanh ngay huw mjaiksndsdf
+          {productDetails?.name}
         </WrapperNameProduct>
         <div>
-          <StarFilled style={{ fontSize: "12px", color: "rgb(253,216,54)" }} />
-          <StarFilled style={{ fontSize: "12px", color: "rgb(253,216,54)" }} />
-          <StarFilled style={{ fontSize: "12px", color: "rgb(253,216,54)" }} />
+          <Rate allowHalf defaultValue={productDetails?.rating} value={productDetails?.rating}></Rate>
           <WrapperTextSell>| Da ban 1000+</WrapperTextSell>
         </div>
 
         <WrapperPriceProduct>
-          <WrapperPriceTextProduct>200.000d</WrapperPriceTextProduct>
+          <WrapperPriceTextProduct>{productDetails?.price}</WrapperPriceTextProduct>
         </WrapperPriceProduct>
 
         <WrapperAddress>
           <span>Giao den</span>
-          <span className="address">Quan 5, TP Ho Chi Minh</span>
+          <span className="address">{user?.address}</span>
           <span className="change-address">Doi dia chi</span>
         </WrapperAddress>
 
         <div style={{margin: '10px 0 20px',padding:"10px 0", borderTop:'1px solid #ccc', borderBottom:'1px solid #ccc'}}>
           <div style={{marginBottom:'6px'}}>So luong</div>
           <WrapperQuality>
-            <button style={{ border: "none", background:'transparent' }}>
+            <button style={{ border: "none", background:'transparent', cursor:'pointer' }} onClick={()=>handleChangeCount('decrease')}>
               <MinusOutlined style={{ color: "#000", fontSize: "20px" }} />
             </button>
             <WrapperInputNumber
-              defaultValue={3}
               onChange={onChange}
+              value={numProduct}
+              defaultValue ={1}
               size="small"
+              cursor='pointer'
             />
-            <button style={{ border: "none",  background:'transparent' }}>
-              <PlusOutlined style={{ color: "#000", fontSize: "20px" }} />
+            <button style={{ border: "none",  background:'transparent', cursor:'pointer' }} onClick={()=>handleChangeCount('increase')}>
+              <PlusOutlined style={{ color: "#000", fontSize: "20px" }}/>
             </button>
           </WrapperQuality>
         </div>
@@ -90,7 +127,7 @@ const ProductDetailComponent = () => {
             border:'none',
             borderRadius:'4px'
           }}
-          textButton={'Chon mua'}
+          textButton={'Chọn mua'}
           styleTextButton={{color:'#fff', fontSize:'15px', fontWeight:'500'}}
         >
         </ButtonComponent>
