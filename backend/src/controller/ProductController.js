@@ -104,7 +104,21 @@ const getAllProduct = async (req, res) => {
   
     try {
       const {limit, page, sort, filter} = req.query;
-      const response = await ProductService.getAllProduct( Number(page)||0, sort, filter);
+      const response = await ProductService.getAllProduct(Number(limit) ||8, Number(page)||0, sort, filter);
+      return res.status(200).json(response);
+    } catch (e) {
+      return res.status(500).json({
+        status: "ERROR",
+        message: "Internal Server Error",
+        error: e.message,
+      });
+    }
+  };
+
+  const getAllType = async (req, res) => {
+  
+    try {
+      const response = await ProductService.getAllType();
       return res.status(200).json(response);
     } catch (e) {
       return res.status(500).json({
@@ -121,5 +135,6 @@ module.exports = {
    getDetailProduct,
    deleteProduct,
    getAllProduct,
-   deleteMany
+   deleteMany,
+   getAllType
 };

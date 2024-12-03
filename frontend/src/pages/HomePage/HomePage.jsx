@@ -14,10 +14,11 @@ import * as ProductService from "../../services/ProductService";
 import { useSelector } from "react-redux";
 
 const HomePage = () => {
-  const arr = ["TV", "Tu", "May", "Giat"];
+  const arr=['TV','MG']
   const searchProduct = useSelector((state)=>state?.product?.search)
   const [limit, setLimit]=useState(5)
   const [stateProducts, setStateProducts]=useState([])
+  const [typeProduct, setTypeProduct]=useState([])
   const refSearch = useRef()
 
   const fetchProductAll = async (context) =>{
@@ -52,13 +53,23 @@ const HomePage = () => {
      }
   },[products])
   
-  console.log('data',products)
+  const fetchAllTypeProduct = async () =>{
+    const res=await ProductService.getAllTypeProduct()
+    //console.log('res',res)
+    // if(res?.data==='Ok'){
+    //   setTypeProduct(res?.data)
+    // }
+    setTypeProduct(res?.data)
+  }
+  useEffect(()=>{
+     fetchAllTypeProduct()
+  },[])
   return (
     <>
       <div style={{ width: "1270px", margin: "0 auto" }}>
         <WrapperTypeProduct>
-          {arr.map((item) => {
-            return <TypeProduct name={item} key={item} />;
+          {typeProduct.map((item) => {
+            return(<TypeProduct name={item} key={item} />) 
           })}
         </WrapperTypeProduct>
       </div>

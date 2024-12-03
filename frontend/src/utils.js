@@ -15,4 +15,27 @@ export const getBase64 = (file) => {
       reader.onerror = (error) => reject(error);
     });
   };
+
+  export const renderOptions = (arr) => {
+    const defaultOptions = [
+      { value: "quan", label: "Quần" },
+      { value: "ao", label: "Áo" },
+    ];
+  
+    let results = [...defaultOptions];
+    //let results=[]
+    if(arr){
+      results = arr?.map((opt)=>{
+        return{
+          value:opt,
+          label:opt
+        }
+      })
+    }
+    results.push({
+      label:'Thêm type',
+      value:'add_type'
+    })
+    return results
+  };
   
