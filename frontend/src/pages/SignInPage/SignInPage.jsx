@@ -5,7 +5,7 @@ import InputForm from '../../components/InputForm/InputForm';
 import H14 from '../../assets/image/H14.png';
 import { Divider, Image } from 'antd';
 import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {useMutation} from '@tanstack/react-query'
 import * as UseService from '../../services/UserService'
 import { useMutationHooks } from '../../hooks/UserMutationHooks';
@@ -18,6 +18,7 @@ import { updateUser } from '../../redux/slice/userSlide';
 
 const SignInPage = () => {
   const [isShowPassword, setIsShowPassword]=useState(false)
+  const location=useLocation()
   const [email, setEmail] = useState('')
   const [password, setPassword]= useState('')
   const dispatch = useDispatch()
@@ -31,7 +32,12 @@ const SignInPage = () => {
 const {data, isLoading, isSuccess} =mutation
 useEffect(()=>{
    if(isSuccess && data?.status !== 'ERR'){
-      navigate('/')
+      if(location?.state){
+        navigate(location?.state)
+      }
+      else{
+        navigate('/')
+      }
       localStorage.setItem('access_token',JSON.stringify(data?.access_token))
       if(data?.access_token){
         const decode =jwtDecode(data?.access_token)

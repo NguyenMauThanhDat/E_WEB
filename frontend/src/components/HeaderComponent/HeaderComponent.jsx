@@ -29,6 +29,7 @@ const HeaderComponent = () => {
   const [userName, setUserName] = useState('')
   const [userAvatar, setUserAvatar] = useState('')
   const dispatch = useDispatch()
+  const order=useSelector((state)=>state.order)
   const [loading, setLoading]= useState(false)
   const [search, setSearch] = useState('')
 
@@ -119,8 +120,8 @@ const HeaderComponent = () => {
           </WrapperHeaderAccount>
           {/* </Loading> */}
             <div>
-            <div onClick={()=>navigate('/oder')} style={{cursor:'pointer'}}>
-              <Badge count={4} size="small">
+            <div onClick={()=>navigate('/order')} style={{cursor:'pointer'}}>
+              <Badge count={order?.orderItem?.length} size="small">
                 <ShoppingCartOutlined
                   style={{ fontSize: "40px", color: "#fff" }}
                 />

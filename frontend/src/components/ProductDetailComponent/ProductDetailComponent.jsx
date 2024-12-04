@@ -18,11 +18,17 @@ import {
 import { MinusOutlined, PlusOutlined, StarFilled } from "@ant-design/icons";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import { useQuery } from "@tanstack/react-query";
-import {useSelector } from "react-redux"
+import {useDispatch, useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { addOrderProduct } from "../../redux/slice/orderSlice";
 
 const ProductDetailComponent = ({idProduct}) => {
   const [numProduct, setNumProduct] =useState(1)
   const user =useSelector((state)=>state.user)
+  const navigate=useNavigate();
+  const location=useLocation()
+  const dispatch=useDispatch()
   const onChange = (value) => {
        setNumProduct(Number(value))
   };
@@ -56,6 +62,33 @@ const ProductDetailComponent = ({idProduct}) => {
       setNumProduct(numProduct - 1)
     }
   }
+
+  const handleAddOrderProduct = () =>{
+    if(!user?.id){
+      navigate('/sign-in',{state:location?.pathname})
+    } else{
+    //   {
+    //     name: { type: String, required: true },
+    //     amount: { type: Number, required: true },
+    //     image: { type: String, required: true },
+    //     price: { type: Number, required: true },
+    //     countInStock: {
+    //         type: mongoose.Schema.Types.ObjectId,
+    //         ref: 'Product',
+    //         required: true
+    //     }
+    // }
+    dispatch(addOrderProduct({
+      orderItem:{
+        name:productDetails?.name,
+        amount:numProduct,
+        image:productDetails?.image,
+        price:productDetails?.price,
+        product:productDetails?._id
+      }
+    }))
+    }
+  }
   return (
     <Row style={{ padding: "16px", background: "#fff" }}>
       <Col span={10}>
@@ -84,7 +117,7 @@ const ProductDetailComponent = ({idProduct}) => {
         </WrapperNameProduct>
         <div>
           <Rate allowHalf defaultValue={productDetails?.rating} value={productDetails?.rating}></Rate>
-          <WrapperTextSell>| Da ban 1000+</WrapperTextSell>
+          <WrapperTextSell>| Đã bán 1000+</WrapperTextSell>
         </div>
 
         <WrapperPriceProduct>
@@ -92,13 +125,13 @@ const ProductDetailComponent = ({idProduct}) => {
         </WrapperPriceProduct>
 
         <WrapperAddress>
-          <span>Giao den</span>
+          <span>Giao đến</span>
           <span className="address">{user?.address}</span>
-          <span className="change-address">Doi dia chi</span>
+          <span className="change-address">Đổi địa chỉ</span>
         </WrapperAddress>
 
         <div style={{margin: '10px 0 20px',padding:"10px 0", borderTop:'1px solid #ccc', borderBottom:'1px solid #ccc'}}>
-          <div style={{marginBottom:'6px'}}>So luong</div>
+          <div style={{marginBottom:'6px'}}>Số lượng</div>
           <WrapperQuality>
             <button style={{ border: "none", background:'transparent', cursor:'pointer' }} onClick={()=>handleChangeCount('decrease')}>
               <MinusOutlined style={{ color: "#000", fontSize: "20px" }} />
@@ -127,6 +160,7 @@ const ProductDetailComponent = ({idProduct}) => {
             border:'none',
             borderRadius:'4px'
           }}
+          onClick={handleAddOrderProduct}
           textButton={'Chọn mua'}
           styleTextButton={{color:'#fff', fontSize:'15px', fontWeight:'500'}}
         >
