@@ -48,7 +48,8 @@ const AdminProduct = () => {
     image: "",
     type: "",
     countInStock: "",
-    newType:''
+    newType:'',
+    discount:''
   });
   const [stateProductDetails, setStateProductDetails] = useState({
     name: "",
@@ -58,10 +59,11 @@ const AdminProduct = () => {
     image: "",
     type: "",
     countInStock: "",
+    discount:""
   });
 
   const mutation = useMutationHooks((data) => {
-    const { name, price, descriptions, rating, image, type, countInStock } =
+    const { name, price, descriptions, rating, image, type, countInStock, discount } =
       data;
     ProductService.createProduct({
       name,
@@ -71,6 +73,7 @@ const AdminProduct = () => {
       image,
       type,
       countInStock,
+      discount
     });
   });
 
@@ -92,7 +95,7 @@ const AdminProduct = () => {
   });
 
   const getAllProducts = async () => {
-    const res = await ProductService.getAllProduct();
+    const res = await ProductService.getAllProduct('',100);
     return res;
   };
 
@@ -108,6 +111,7 @@ const AdminProduct = () => {
           image: res?.data?.image,
           type: res?.data?.type,
           countInStock: res?.data?.countInStock,
+          discount:res?.data?.discount
         });
       }
     } catch (error) {
@@ -397,6 +401,7 @@ const AdminProduct = () => {
       image: "",
       type: "",
       countInStock: "",
+      discount:''
     });
     form.resetFields();
   };
@@ -425,6 +430,7 @@ const AdminProduct = () => {
       image: stateProduct.image,
       type: stateProduct.type==='add_type' ?stateProduct.newType:stateProduct.type,
       countInStock: stateProduct.countInStock,
+      discount:stateProduct.discount
         }
     mutation.mutate(params, {
       onSettled: () => {
@@ -665,6 +671,23 @@ const AdminProduct = () => {
             />
           </Form.Item>
 
+          <Form.Item
+            label="Discount"
+            name="discount"
+            rules={[
+              {
+                required: true,
+                message: "Please input your discount!",
+              },
+            ]}
+          >
+            <InputComponent
+              value={stateProduct.discount}
+              onChange={handleOnChange}
+              name="discount"
+            />
+          </Form.Item>
+
           <Form.Item label="Image" name="image">
             <WrapperUploadFile onChange={handleOnchangeAvatar} maxCount={1}>
               <Button>Select File</Button>
@@ -812,6 +835,23 @@ const AdminProduct = () => {
               value={stateProductDetails.rating}
               onChange={handleOnChangeDetails}
               name="rating"
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Discount"
+            name="discount"
+            rules={[
+              {
+                required: true,
+                message: "Please input discount !",
+              },
+            ]}
+          >
+            <InputComponent
+              value={stateProductDetails.discount}
+              onChange={handleOnChangeDetails}
+              name="discount"
             />
           </Form.Item>
 

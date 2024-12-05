@@ -22,6 +22,7 @@ import {useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { addOrderProduct } from "../../redux/slice/orderSlice";
+import { convertPrice } from "../../utils";
 
 const ProductDetailComponent = ({idProduct}) => {
   const [numProduct, setNumProduct] =useState(1)
@@ -121,7 +122,7 @@ const ProductDetailComponent = ({idProduct}) => {
         </div>
 
         <WrapperPriceProduct>
-          <WrapperPriceTextProduct>{productDetails?.price}</WrapperPriceTextProduct>
+          <WrapperPriceTextProduct>{convertPrice(productDetails?.price)}</WrapperPriceTextProduct>
         </WrapperPriceProduct>
 
         <WrapperAddress>
