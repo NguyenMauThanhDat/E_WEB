@@ -45,13 +45,18 @@ export const orderSlice = createSlice({
     ,
     removeOrderProduct: (state, action) => {
       const {idProduct} = action.payload
-      const itemOrder=state?.orderItem?.find((item) => item?.product!==idProduct)
-      itemOrder.amount = itemOrder
+      const itemOrder=state?.orderItem?.filter((item) => item?.product!==idProduct)
+      state.orderItem = itemOrder
+    },
+    removeAllOrderProduct: (state, action) => {
+      const {listChecked} = action.payload
+      const itemOrder=state?.orderItem?.filter((item) => listChecked.includes(item.product))
+      state.orderItem = itemOrder
     },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { addOrderProduct,increaseAmount,decreaseAmount,removeOrderProduct } = orderSlice.actions
+export const { addOrderProduct,increaseAmount,decreaseAmount,removeOrderProduct,removeAllOrderProduct } = orderSlice.actions
 
 export default orderSlice.reducer
