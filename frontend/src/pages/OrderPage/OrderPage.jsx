@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import { Button, Checkbox, Form} from 'antd';
-import { WrapperCountOrder, WrapperStyleHeader, WrapperLeft,WrapperItemOrder,WrapperPriceDiscount , WrapperRight, WrapperInfor,WrapperTotal, WrapperListOrder } from './style';
+import { WrapperCountOrder, WrapperStyleHeader, WrapperLeft,WrapperItemOrder,WrapperPriceDiscount , WrapperRight, WrapperInfor,WrapperTotal, WrapperListOrder, WrapperStyleHeaderDilivery } from './style';
 import {DeleteOutlined, MinusOutlined, PlusOutlined} from '@ant-design/icons'
 import * as message from '../../components/Message/Message';
 import {WrapperInputNumber, WrapperQuality} from '../../components/ProductDetailComponent/style'
@@ -14,6 +14,7 @@ import { useMutationHooks } from '../../hooks/UserMutationHooks';
 import * as UserService from '../../services/UserService';
 import { updateUser } from '../../redux/slice/userSlide';
 import { Navigate, useNavigate } from 'react-router-dom';
+import StepComponent from '../../components/StepComponent/StepComponent';
 
 const OrderPage = () => {
   const order = useSelector((state)=>state.order)
@@ -104,9 +105,9 @@ const OrderPage = () => {
   },[order]) 
 
   const diviliryPrice = useMemo(()=>{
-    if(priceMemo>2000000){
+    if(priceMemo>200000&&priceMemo<500000){
       return 10000
-    } else if(priceMemo===0){
+    } else if(priceMemo>=500000||order?.orderItemSelected?.length===0){
       return 0;
     }else{
       return 20000
@@ -170,13 +171,28 @@ const OrderPage = () => {
   const handleChangeAddress = () =>{
      setIsOpenModalUpdateInfo(true)
   }
-
+const itemsDilivery = [
+      {
+        title: '20.000 VND',
+        description:'Dưới 200.000 VND',
+      },
+      {
+        title: '10.000 VND',
+        description:'Từ 200.000 VND đến 500.000 VND',
+      },
+      {
+        title: '0 VND',
+        description:'Trên 500.000 VND',
+      },]
   return (
     <div style={{background:'#f5f5f5',width:'100%',height:'100vh'}}>
      <div style={{height:'100%',width:'1270px',margin:'0 auto'}}>
         <h3>Giỏ hàng</h3>
         <div style={{display:'flex', justifyContent:'center'}}>
            <WrapperLeft>
+            <WrapperStyleHeaderDilivery>
+              <StepComponent items={itemsDilivery} current={diviliryPrice===20000?0:diviliryPrice===10000?1:order.orderItemSelected.length===0?0:2}></StepComponent>
+            </WrapperStyleHeaderDilivery>
                 <WrapperStyleHeader>
                   <span style={{display:'inline-block', width:'390px'}}>
                     <Checkbox onChange={handleOnChangeCheckAll} checked={listChecked?.length===order?.orderItem?.length}></Checkbox>

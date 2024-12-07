@@ -111,6 +111,24 @@ const PaymentPage = () => {
   const {data} =mutationUpdate
   const {data:dataAdd, isSuccess, isError} =mutationAddOrder
 
+  useEffect(()=>{
+    if(isSuccess ){
+      const arrayOrder =[]
+      order?.orderItemSelected?.forEach(element=>{arrayOrder.push(element.product)})
+      dispatch(removeAllOrderProduct({listChecked:arrayOrder}))
+      navigate('/orderSuccess',{
+        state:{
+          dilivery,
+          payment,
+          order:order?.orderItemSelected,
+          totalPrice:totalPrice
+        }
+      })
+    } else if(isError){
+      message.error()
+    }
+  },[isSuccess, isError])
+
   const handleUpdateInfo = () =>{
     const {name, address, city, phone} = stateUserDetails
      if(name && address && city && phone){
@@ -154,12 +172,12 @@ const PaymentPage = () => {
      setIsOpenModalUpdateInfo(true)
   }
 
-  const handleDilivery = () =>{
-
+  const handleDilivery = (e) =>{
+      setDilivery(e.target.value)
   }
 
-  const handlePayment = () =>{
-
+  const handlePayment = (e) =>{
+      setPayment(e.target.value)
   }
 
   return (
