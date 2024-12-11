@@ -10,6 +10,8 @@ import TypeProductPage from "../pages/TypeProductPage/TypeProductPage";
 import AdminPage from "../pages/AdminPage/AdminPage";
 import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import OrderSuccess from "../pages/OrderSuccess/OrderSuccess";
+import MyOrderPage from "../pages/MyOrderPage/MyOrderPage";
+import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
 
 export const routes =[
     {
@@ -20,6 +22,11 @@ export const routes =[
     {
         path:'/order',
         page: OrderPage,
+        isShowHeader: true,
+    },
+    {
+        path:'/my-order',
+        page: MyOrderPage,
         isShowHeader: true,
     },
     {
@@ -40,6 +47,11 @@ export const routes =[
     {
         path:'/sign-in',
         page: SignInPage,
+        isShowHeader: false,
+    },
+    {
+        path:'/forgotPassword',
+        page: ForgotPassword,
         isShowHeader: false,
     },
     {

@@ -18,7 +18,7 @@ routes(app);
 
 mongoose
   .connect(
-    "mongodb+srv://mauthanhdat:giahan1607@cluster0.n1ttw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    "mongodb+srv://mauthanhdat:giahan1607@cluster0.n1ttw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&socketTimeoutMS=140000"
   )
   .then(() => {
     console.log("success");

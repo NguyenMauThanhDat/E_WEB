@@ -213,5 +213,6 @@ module.exports = {
   getDetailUser,
   refreshToken,
   logoutUser,
-  deleteMany
+  deleteMany,
+  //forgotPassword
 };

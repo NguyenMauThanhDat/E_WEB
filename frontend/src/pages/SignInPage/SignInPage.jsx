@@ -59,6 +59,10 @@ const handleGetDetailUser = async (id, token) => {
     navigate('/sign-up')
   }
 
+  const handleNegivateForgotPassword = () =>{
+    navigate('/forgotPassword')
+  }
+
   const handleOnchangeEmail = (value) => {
     setEmail(value)
   }
@@ -107,7 +111,7 @@ const handleGetDetailUser = async (id, token) => {
         >
         </ButtonComponent>
          {/* </Loading> */}
-        <p><WrapperTextLight>Quen mat khau</WrapperTextLight></p>
+        <p><WrapperTextLight onClick={handleNegivateForgotPassword}>Quen mat khau</WrapperTextLight></p>
         <p>Chua co tai khoan <WrapperTextLight onClick={handleNegivateSignUp}>Tao tai khoan</WrapperTextLight></p>
 
     </WrapperContainerLeft>
@@ -117,7 +121,6 @@ const handleGetDetailUser = async (id, token) => {
     </WrapperContainerRight>
     </div>
     </div>
-    
   );
 };
 

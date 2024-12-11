@@ -50,12 +50,12 @@ const HeaderComponent = () => {
 
   const content =(
     <div>
-      <WrapperContentPopup onClick={handleLogout}>Đăng xuất</WrapperContentPopup>
       <WrapperContentPopup onClick={() => navigate('/profile-user')}>Thông tin người dùng</WrapperContentPopup>
       {user?.isAdmin && (
       <WrapperContentPopup onClick={() => navigate('/system/admin')}>Quản lí hệ thống</WrapperContentPopup>
       )}
-
+      <WrapperContentPopup onClick={() => navigate('/my-order?id=${user.id}&token=${user.token}')}>Đơn hàng của tôi</WrapperContentPopup>
+      <WrapperContentPopup onClick={handleLogout}>Đăng xuất</WrapperContentPopup>
     </div>
   )
   const onSearch = (e) =>{
