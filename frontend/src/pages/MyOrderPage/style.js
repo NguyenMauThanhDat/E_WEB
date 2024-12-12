@@ -30,6 +30,15 @@ export const WrapperLeft =styled.div`
  width: 910px;
 `
 export const WrapperListOrder =styled.div`
+display: flex;
+flex-direction: column;
+  flex-wrap: wrap; 
+  gap: 20px; /* Thêm khoảng cách giữa các phần tử */
+`
+export const WrapperHeaderItem = styled.div`
+  display: flex;
+  align-items: center;
+
 `
 export const WrapperItemOrder =styled.div`
 display:flex;
@@ -42,6 +51,7 @@ width:950px;
 margin:0 auto;
 border-radius:6px;
 box-shadow:0 12px 12px #ccc;
+margin-bottom: 12px;
 `
 
 export const WrapperRight =styled.div`
@@ -73,6 +83,7 @@ export const WrapperContainer = styled.div`
   box-sizing: border-box;
   width: 100%;
   background-color:"f5f5f5";
+  gap: 10px
 `;
 
 export const WrapperStatus = styled.div`
