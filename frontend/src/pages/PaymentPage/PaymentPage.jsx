@@ -58,7 +58,7 @@ const PaymentPage = () => {
 
   const priceDiscountMemo = useMemo(()=>{
     const result=order?.orderItemSelected?.reduce((total, cur)=>{
-       return total + ((cur.discount*cur.amount))
+      return total + ((cur.discount*cur.amount))
     },0)
     if(Number(result)){
       return result

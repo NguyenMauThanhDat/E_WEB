@@ -12,6 +12,7 @@ import PaymentPage from "../pages/PaymentPage/PaymentPage";
 import OrderSuccess from "../pages/OrderSuccess/OrderSuccess";
 import MyOrderPage from "../pages/MyOrderPage/MyOrderPage";
 import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
+import DetailOrderPage from "../pages/DetailOrderPage/DetailOrderPage";
 
 export const routes =[
     {
@@ -22,6 +23,11 @@ export const routes =[
     {
         path:'/order',
         page: OrderPage,
+        isShowHeader: true,
+    },
+    {
+        path:'/detail-order/:id',
+        page: DetailOrderPage,
         isShowHeader: true,
     },
     {

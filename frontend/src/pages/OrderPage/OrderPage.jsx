@@ -42,11 +42,15 @@ const OrderPage = () => {
   const handleDeleteOrder = (idProduct) =>{
     dispatch(removeOrderProduct({idProduct}))
   }
-  const handleChangeCount = (type,idProduct) =>{
+  const handleChangeCount = (type,idProduct, max) =>{
     if(type==='increase'){
-      dispatch(increaseAmount({idProduct}))
+      if(!max){
+        dispatch(increaseAmount({idProduct}))
+      } 
     } else{
-      dispatch(decreaseAmount({idProduct}))
+      if(!max){
+        dispatch(decreaseAmount({idProduct}))
+      }
     }
   }
 
@@ -96,7 +100,7 @@ const OrderPage = () => {
 
   const priceDiscountMemo = useMemo(()=>{
     const result=order?.orderItemSelected?.reduce((total, cur)=>{
-       return total + ((cur.discount*cur.amount))
+      return total + ((cur.discount*cur.amount))
     },0)
     if(Number(result)){
       return result
@@ -222,11 +226,11 @@ const itemsDilivery = [
                             </WrapperPriceDiscount> */}
                           </span>
                           <WrapperCountOrder>
-                             <button style={{border:'none', background:'transparent', cursor:'pointer'}} onClick={()=>handleChangeCount('decrease',order?.product)}>
+                             <button style={{border:'none', background:'transparent', cursor:'pointer'}} onClick={()=>handleChangeCount('decrease',order?.product,order?.amount===1)}>
                                   <MinusOutlined style={{color:'#000', fontSize:'10px'}}></MinusOutlined>
                              </button>
-                             <WrapperInputNumber defaultValue={order?.amount} value={order?.amount} size="small"></WrapperInputNumber>
-                             <button style={{border:'none', background:'transparent', cursor:'pointer'}} onClick={()=>handleChangeCount('increase',order?.product)}>
+                             <WrapperInputNumber defaultValue={order?.amount} value={order?.amount} size="small" min={1} max={order?.countInStock}></WrapperInputNumber>
+                             <button style={{border:'none', background:'transparent', cursor:'pointer'}} onClick={()=>handleChangeCount('increase',order?.product,order?.amount===order.countInStock)}>
                                   <PlusOutlined style={{color:'#000', fontSize:'10px'}}></PlusOutlined>
                              </button>
                           </WrapperCountOrder>
@@ -253,7 +257,7 @@ const itemsDilivery = [
                   </div>
                   <div style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}>
                     <span>Giảm giá</span>
-                    <span style={{color:'#000', fontSize:'14px', fontWeight:'bold'}}>{`${priceDiscountMemo} %`}</span>
+                    <span style={{color:'#000', fontSize:'14px', fontWeight:'bold'}}>{convertPrice(priceDiscountMemo)}</span>
                   </div>
                   {/* <div style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}>
                     <span>Thuế</span>

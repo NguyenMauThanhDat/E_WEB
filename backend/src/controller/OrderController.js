@@ -20,7 +20,7 @@ const createOrder = async (req, res) => {
   }
 };
 
-const getOrderDetail = async (req, res) => {
+const getAllOrderDetail = async (req, res) => {
   try {
     const userId = req.params.id;
     if (!userId) {
@@ -29,7 +29,7 @@ const getOrderDetail = async (req, res) => {
         message: "The userId is required",
       });
     }
-    const response = await OrderService.getOrderDetail(userId);
+    const response = await OrderService.getAllOrderDetail(userId);
     return res.status(200).json(response);
   } catch (e) {
     return res.status(404).json({
@@ -40,7 +40,52 @@ const getOrderDetail = async (req, res) => {
   }
 };
 
+const getOrderDetail = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    if (!orderId) {
+      return res.status(400).json({
+        status: "ERROR",
+        message: "The orderId is required",
+      });
+    }
+    const response = await OrderService.getOrderDetail(orderId);
+    return res.status(200).json(response);
+  } catch (e) {
+    return res.status(404).json({
+      status: "ERROR",
+      message: "Internal Server Error",
+      error: e.message,
+    });
+  }
+}
+
+const cancelOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const data=req.body
+    if (!orderId) {
+      return res.status(400).json({
+        status: "ERROR",
+        message: "The orderId is required",
+      });
+    }
+    const response = await OrderService.cancelOrder(orderId, data);
+    return res.status(200).json(response);
+  } catch (e) {
+    return res.status(404).json({
+      status: "ERROR",
+      message: "Internal Server Error",
+      error: e.message,
+    });
+  }
+}
+
+
+
 module.exports = {
    createOrder,
-   getOrderDetail
+   getAllOrderDetail,
+   getOrderDetail,
+   cancelOrder
 };

@@ -66,10 +66,32 @@ const createOrder = (newOrder) => {
   });
 };
 
-const getOrderDetail = (id) => {
+const getAllOrderDetail = (id) => {
   return new Promise(async (resolve, reject) => {
       try {
           const order = await Order.find({ user: id });
+          if (order === null) {
+              return resolve({
+                  status: 'ERR',
+                  message: 'Order is not defined',
+              });
+          }
+
+          resolve({
+              status: 'OK',
+              message: 'Success',
+              data: order
+          });
+      } catch (e) {
+          reject(e);
+      }
+  });
+};
+
+const getOrderDetail = (id) => {
+  return new Promise(async (resolve, reject) => {
+      try {
+          const order = await Order.findById({ _id: id });
           if (order === null) {
               return resolve({
                   status: 'OK',
@@ -88,7 +110,52 @@ const getOrderDetail = (id) => {
   });
 };
 
+const cancelOrder = (id, data) => {
+  return new Promise(async (resolve, reject) => {
+      try {
+          const promise= data.map(async (order)=>{
+            const productData =await Product.findOneAndUpdate(
+              {
+                _id:order.product,
+              },
+              {
+                $inc:{
+                  countInStock:+order.amount,
+                  selled:-order.amount
+                }
+              },
+              {new:true}
+            )
+            if(productData){
+              const order = await Order.findByIdAndDelete(id);
+          if (order === null) {
+              return resolve({
+                  status: 'OK',
+                  message: 'Order is not defined',
+              });
+          }
+            } else{
+              return{
+                status: "ERR",
+                message: "ERR",
+                id: order.product,
+              };
+            }
+           
+          })
+          resolve({
+            status:'OK',
+            message:'Delete Order Success'
+          })
+      } catch (e) {
+          reject(e);
+      }
+  });
+};
+
 module.exports = {
   createOrder,
-  getOrderDetail
+  getAllOrderDetail,
+  getOrderDetail,
+  cancelOrder
 };
