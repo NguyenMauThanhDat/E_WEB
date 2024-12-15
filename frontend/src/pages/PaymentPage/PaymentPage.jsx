@@ -15,6 +15,8 @@ import * as UserService from '../../services/UserService';
 import * as OrderService from '../../services/OrderService';
 import { updateUser } from '../../redux/slice/userSlide';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import * as PaymentService from '../../services/PaymentService'
 
 const PaymentPage = () => {
   const order = useSelector((state)=>state.order)
@@ -31,6 +33,7 @@ const PaymentPage = () => {
   const navigate=useNavigate()
   const [form] =Form.useForm()
   const dispatch=useDispatch()
+  const [sdk, setSdk]=useState(false)
   
   useEffect(() => {
     if (stateUserDetails) {
@@ -179,6 +182,53 @@ const PaymentPage = () => {
   const handlePayment = (e) =>{
       setPayment(e.target.value)
   }
+  const handleSuccess = (details, data) => {
+    alert("Transaction completed by " + details.payer.name.given_name);
+    mutationAddOrder.mutate({
+      token: user?.access_token,  
+      orderItem: order?.orderItemSelected, 
+      fullName: user?.name, 
+      address: user?.address, 
+      phone: user?.phone, 
+      city: user?.city,  
+      paymentMethod: payment,
+      itemsPrice: priceMemo, 
+      shippingPrice: diviliryPrice, 
+      totalPrice: totalPrice,  
+      user: user?.id  
+    });
+
+    // OPTIONAL: Call your server to save the transaction
+    return fetch("/paypal-transaction-complete", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        orderID: data.orderID,
+      }),
+    });
+  };
+ const addPaypalScript = async ()=>{
+     const {data}=await PaymentService.getConfig()
+     const script =document.createElement('script')
+     script.type='text/javascript'
+     script.src=`https://sandbox.paypal.com/sdk/js?client-id=${data}`
+     script.async=true;
+     script.onload = () =>{
+         setSdk(true)
+     }
+     document.body.appendChild(script)
+ }
+
+ useEffect(()=>{
+  if(!window.paypal){
+    addPaypalScript();
+  } else{
+    setSdk(true)
+  }
+ 
+},[])
 
   return (
     <div style={{background:'#f5f5f5',width:'100%',height:'100vh'}}>
@@ -200,6 +250,7 @@ const PaymentPage = () => {
                         <Label>Chọn phương thức thanh toán</Label>
                         <WrapperRadio onChange={handlePayment} value={payment}>
                             <Radio value="later_money" >Thanh toán tiền mặt khi nhận hàng</Radio>
+                            <Radio value="paypal" >Thanh toán Paypal</Radio>
                             {/* <Radio value="gojek" ><span style={{color:'#ea8500', fontWeight:'bold'}}></span></Radio> */}
                         </WrapperRadio>
                     </div>
@@ -240,7 +291,30 @@ const PaymentPage = () => {
                   </span>
                 </WrapperTotal>
             </div>
-            <ButtonComponent 
+            {payment==='paypal'&&setSdk?(
+              <PayPalScriptProvider options={{ "client-id": "AXopFJXAd7j1mDd8EOWH5BU6njCttoWtOD0AEkiaZzhBmx_cUUxekgC3c1V5gNUIb-q9AC2dJLfH1M_1" }}>
+              <PayPalButtons
+                style={{ layout: "vertical" }}
+                createOrder={(data, actions) => {
+                  return actions.order.create({
+                    purchase_units: [
+                      {
+                        amount: {
+                          value: "0.01", // Giá trị thanh toán
+                        },
+                      },
+                    ],
+                  });
+                }}
+                onApprove={(data, actions) => {
+                  return actions.order.capture().then((details) => {
+                    handleSuccess(details, data);
+                  });
+                }}
+              />
+            </PayPalScriptProvider>
+            ):(
+              <ButtonComponent 
                onClick={()=>handleAddOrder()}
                size={40}
                styleButton={{
@@ -257,6 +331,7 @@ const PaymentPage = () => {
                styleTextButton={{color:'#fff', fontSize:'15px', fontWeight:'bold'}}
             >
             </ButtonComponent>
+            )}
           </WrapperRight>
         </div>
      </div>
