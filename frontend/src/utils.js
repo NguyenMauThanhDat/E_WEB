@@ -1,3 +1,5 @@
+import { orderContant } from "./contant";
+
 export const isJsonString = (data) =>{
     try{
        JSON.parse(data);
@@ -47,3 +49,26 @@ export const getBase64 = (file) => {
         return null;
     }
   }
+  
+  export const convertDataChart = (data,type) =>{
+    try{
+       const object={}
+       Array.isArray(data)&&data.forEach((opt)=>{
+         if(!object[opt[type]]){
+           object[opt[type]]=1
+         } else{
+           object[opt[type]]+=1
+         }
+       })
+       const results=Array.isArray(Object.keys(object))&&Object.keys(object).map((item)=>{
+         return {
+           name: orderContant.payment[item]||item,
+           value:object[item]
+         }
+       })
+       return results
+    }
+    catch(e){
+       return []
+    }
+ }

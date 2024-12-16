@@ -4,6 +4,7 @@ import { Menu } from 'antd';
 import HeaderComponent from '../../components/HeaderComponent/HeaderComponent';
 import AdminUser from '../../components/AdminUser/AdminUser';
 import AdminProduct from '../../components/AdminProduct/AdminProduct';
+import OrderAdmin from '../../components/OrderAdmin/OrderAdmin';
 
 const AdminPage = () => {
     const items = [
@@ -19,27 +20,9 @@ const AdminPage = () => {
           
         },
         {
-          key: 'sub4',
-          label: 'Navigation Three',
+          key: 'order',
+          label:'Đơn hàng',
           icon: <SettingOutlined />,
-          children: [
-            {
-              key: '9',
-              label: 'Option 9',
-            },
-            {
-              key: '10',
-              label: 'Option 10',
-            },
-            {
-              key: '11',
-              label: 'Option 11',
-            },
-            {
-              key: '12',
-              label: 'Option 12',
-            },
-          ],
         },
       ];
    const [theme, setTheme] = useState('light');
@@ -53,7 +36,9 @@ const AdminPage = () => {
       case 'user':
         return <AdminUser />; // Component được render khi chọn 'user'
       case 'product':
-        return <AdminProduct />; // Placeholder, thay bằng component thực tế
+        return <AdminProduct />;
+      case 'order':
+        return <OrderAdmin />; // Placeholder, thay bằng component thực tế
       default:
         return <></>;
     }

@@ -81,11 +81,22 @@ const cancelOrder = async (req, res) => {
   }
 }
 
-
-
+const getAllOrder = async (req, res) => {
+  try {
+    const response = await OrderService.getAllOrder();
+    return res.status(200).json(response);
+  } catch (e) {
+    return res.status(404).json({
+      status: "ERROR",
+      message: "Internal Server Error",
+      error: e.message,
+    });
+  }
+};
 module.exports = {
    createOrder,
    getAllOrderDetail,
    getOrderDetail,
-   cancelOrder
+   cancelOrder,
+   getAllOrder
 };
