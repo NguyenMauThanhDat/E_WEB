@@ -20,23 +20,9 @@ const createOrder = (newOrder) => {
           {new:true}
         )
         if(productData){
-          const createOrder = await Order.create({
-            orderItem,
-             shippingAddress:{
-                fullName,
-                address,
-                city,
-                phone
-             },
-             paymentMethod,itemsPrice,shippingPrice, totalPrice,
-             user:user, isPaid, paidAt
-          });
-          if (createOrder) {
-            return {
-              status: "OK",
-              message: "Success",
-              data: createOrder,
-            };
+          return {
+            status:'Ok',
+            message:'SUCCESS'
           }
         } else{
           return{
@@ -47,15 +33,33 @@ const createOrder = (newOrder) => {
         }
        
       })
-      //const result =await Promise.all(promise)
-      // const newData =result&& result.filter((item)=>item.id)
-      // if(newData.length){
-      //   resolve({
-      //     status:'ERR',
-      //     message:`Sản phẩm với id${newData.join(',')} không đủ hàng`
-      //   })
-      // }
-
+      const result =await Promise.all(promise)
+      const newData =result&& result.filter((item)=>item.id)
+      if(newData.length){
+        resolve({
+          status:'ERR',
+          message:`Sản phẩm với id: ${newData.join(',')} không đủ hàng`
+        })
+      } else{
+      const createOrder = await Order.create({
+            orderItem,
+             shippingAddress:{
+                fullName,
+                address,
+                city,
+                phone
+             },
+             paymentMethod,itemsPrice,shippingPrice, totalPrice,
+             user:user, isPaid, paidAt
+          });
+          if (createOrder) {       
+            return {
+              status: "OK",
+              message: "Success",
+              data: createOrder,
+            };
+          }
+      }
       resolve({
         status:'OK',
         message:'Success'

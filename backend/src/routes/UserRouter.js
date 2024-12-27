@@ -14,6 +14,9 @@ router.get('/getAll',userController.getAllUser)
 router.get('/get-detail/:id',userController.getDetailUser)
 router.post('/refresh-token',userController.refreshToken)
 router.post('/delete-many',authMiddleWare, userController.deleteMany)
+router.post('/forgot-password', userController.forgotPassword);
+router.post('/reset-password/:token', userController.resetPassword);
+
 
 
 

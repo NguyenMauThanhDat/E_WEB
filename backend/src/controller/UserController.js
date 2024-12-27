@@ -204,6 +204,100 @@ const deleteMany = async (req, res) => {
   }
 };
 
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        status: "ERROR",
+        message: "Email is required",
+      });
+    }
+
+    // Kiểm tra người dùng có tồn tại
+    const user = await UserService.findUserByEmail(email);
+    if (!user) {
+      return res.status(404).json({
+        status: "ERROR",
+        message: "User not found",
+      });
+    }
+
+    // Tạo token reset password
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetTokenExpires = Date.now() + 15 * 60 * 1000; // Token có hiệu lực trong 15 phút
+
+    // Lưu token vào user
+    await UserService.saveResetToken(user._id, resetToken, resetTokenExpires);
+
+    // Gửi email
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+    await UserService.sendForgotPasswordEmail(email, resetUrl);
+
+    return res.status(200).json({
+      status: "OK",
+      message: "Password reset email sent successfully",
+    });
+  } catch (error) {
+    console.error("ForgotPassword Error:", error);
+    return res.status(500).json({
+      status: "ERROR",
+      message: "Internal Server Error",
+    });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { password, confirmPassword } = req.body;
+
+    if (!password || !confirmPassword) {
+      return res.status(400).json({
+        status: "ERROR",
+        message: "Password and confirmPassword are required",
+      });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({
+        status: "ERROR",
+        message: "Passwords do not match",
+      });
+    }
+
+    const user = await UserService.findUserByResetToken(token);
+    if (!user || user.resetPasswordExpires < Date.now()) {
+      return res.status(400).json({
+        status: "ERROR",
+        message: "Token is invalid or has expired",
+      });
+    }
+
+    const hashPassword = bcrypt.hashSync(password, 10);
+    await User.findByIdAndUpdate(user._id, {
+      password: hashPassword,
+      resetPasswordToken: null,
+      resetPasswordExpires: null,
+    });
+
+    return res.status(200).json({
+      status: "OK",
+      message: "Password has been reset successfully",
+    });
+  } catch (error) {
+    console.error("ResetPassword Error:", error);
+    return res.status(500).json({
+      status: "ERROR",
+      message: "Internal Server Error",
+    });
+  }
+};
+
+
 module.exports = {
   createUser,
   loginUser,
@@ -214,5 +308,6 @@ module.exports = {
   refreshToken,
   logoutUser,
   deleteMany,
-  //forgotPassword
+  forgotPassword,
+  resetPassword,
 };

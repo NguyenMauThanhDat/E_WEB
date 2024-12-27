@@ -2,6 +2,7 @@ const User = require("../model/UserModel");
 const bcrypt = require("bcrypt");
 const { generalAccessToken } = require("./JwtService");
 const { generalRefreshToken } = require("./JwtService");
+const nodemailer = require("nodemailer");
 
 const createUser = (newUser) => {
   return new Promise(async (resolve, reject) => {
@@ -15,6 +16,28 @@ const createUser = (newUser) => {
           message: "User already exists",
         });
       }
+      const reg = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
+    const isCheckEmail = reg.test(email);
+    if ( !email || !password || !confirmPassword) {
+      resolve({
+        status: "ERR",
+        message: "The input is required",
+      });
+    }
+
+    if (!isCheckEmail) {
+      resolve ({
+        status: "ERR",
+        message: "The input is email",
+      });
+    }
+
+    if (password !== confirmPassword) {
+      resolve({
+        status: "ERR",
+        message: "The password is equal confirmPassword",
+      });
+    }
       const hash = bcrypt.hashSync(password, 10);
       console.log(hash);
       const createUser = await User.create({
@@ -184,6 +207,38 @@ const deleteManyUser = (ids) => {
     }
   });
 };
+const findUserByEmail = async (email) => {
+  return await User.findOne({ email });
+};
+const saveResetToken = async (userId, token, expires) => {
+  const hashToken = bcrypt.hashSync(token, 10);
+  await User.findByIdAndUpdate(userId, {
+    resetPasswordToken: hashToken,
+    resetPasswordExpires: expires,
+  });
+};
+const sendForgotPasswordEmail = async (email, resetUrl) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail", // Bạn có thể đổi sang SMTP hoặc dịch vụ khác
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.SMTP_USER,
+    to: email,
+    subject: "Reset Your Password",
+    html: `
+      <h1>Reset Your Password</h1>
+      <p>Click the link below to reset your password. This link is valid for 15 minutes.</p>
+      <a href="${resetUrl}" target="_blank">${resetUrl}</a>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
 
 module.exports = {
   createUser,
@@ -193,4 +248,7 @@ module.exports = {
   getAllUser,
   getDetailUser,
   deleteManyUser,
+  findUserByEmail,
+  saveResetToken,
+  sendForgotPasswordEmail
 };
