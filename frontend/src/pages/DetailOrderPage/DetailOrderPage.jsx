@@ -45,11 +45,11 @@ const DetailOrderPage = () => {
         <WrapperHeaderUser>
           <WrapperInfoUser>
             <WrapperLabel>Địa chỉ người nhận</WrapperLabel>
-            <WrapperContentInfo>
-              {/* <div className="name-info">{shippingAddress?.fullName}</div>
+            {/* <WrapperContentInfo>
+              <div className="name-info">{shippingAddress?.fullName}</div>
               <div className='address-info'><span>Địa chỉ:</span>{`${shippingAddress?.address} ${shippingAddress?.city}`}</div>
-              <div className="phone-info"><span>Điện thoại</span>{shippingAddress?.phone}</div> */}
-            </WrapperContentInfo>
+              <div className="phone-info"><span>Điện thoại</span>{shippingAddress?.phone}</div>
+            </WrapperContentInfo> */}
           </WrapperInfoUser>
           <WrapperInfoUser>
           <WrapperLabel>Hình thức giao hàng</WrapperLabel>
@@ -61,7 +61,7 @@ const DetailOrderPage = () => {
           <WrapperInfoUser>
           <WrapperLabel>Hình thức thanh toán</WrapperLabel>
             <WrapperContentInfo>
-              {/* <div className='payment-info'>{orderContant.payment[data?.paymentMethod]}</div> */}
+              <div className='payment-info'>{orderContant.payment[data?.paymentMethod]}</div> 
               {/* <div className="status-payment">{isPaid ? 'Đã thanh toán' : 'Chưa thanh toán'}</div> */}
             </WrapperContentInfo>
           </WrapperInfoUser>
@@ -85,11 +85,11 @@ const DetailOrderPage = () => {
                   textOverflow:'ellipsis', whiteSpace:'nowrap', marginLeft:'10px', height:'70px'}}>Điện thoại</div>
               </WrapperNameProduct>
               {/* <WrapperItemLabel >{convertPrice(order?.price)}</WrapperItemLabel>
-                 <WrapperItemLabel>{order?.amount}</WrapperItemLabel>
-                 <WrapperItemLabel>{order?.discount ? convertPrice(priceMemo*priceDiscountMemo/100):'0 VND'}</WrapperItemLabel>
+                 <WrapperItemLabel>{order?.amount}</WrapperItemLabel> */}
+                 {/* <WrapperItemLabel>{order?.discount ? convertPrice(priceMemo*priceDiscountMemo/100):'0 VND'}</WrapperItemLabel> */}
                  <WrapperItemLabel>{convertPrice(priceMemo)}</WrapperItemLabel>
                  <WrapperItemLabel>{convertPrice(data?.shippingPrice)}</WrapperItemLabel>
-                 <WrapperItemLabel>{convertPrice(data?.totalPrice)}</WrapperItemLabel> */}
+                 <WrapperItemLabel>{convertPrice(data?.totalPrice)}</WrapperItemLabel>
             </WrapperProduct>
              {/* )
          })} */}

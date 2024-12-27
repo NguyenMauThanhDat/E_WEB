@@ -79,8 +79,8 @@ const handleGetDetailUser = async (id, token) => {
     <div style={{display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(0,0,0,0.53)', height:'100vh'}}>
 <div style={{width:'800px', height:'445px', borderRadius:'6px', background:'#fff',display:'flex'}}>
     <WrapperContainerLeft>
-      <h1>Xin chao</h1>
-      <p>Dang nhap hoac tao tai khoan</p>
+      <h1>Xin chào</h1>
+      <p>Đăng nhập hoặc tạo tài khoản</p>
       <InputForm style={{marginBottom:"10px"}} placeholder="abc@gmail.com" value={email} onChange={handleOnchangeEmail}/>
       
       <div style={{position:'relative'}}>
@@ -106,18 +106,18 @@ const handleGetDetailUser = async (id, token) => {
             borderRadius:'4px', 
             margin:'26px 0 10px'
           }}
-          textButton={'Dang nhap'}
+          textButton={'Đăng nhập'}
           styleTextButton={{color:'#fff', fontSize:'15px', fontWeight:'500'}}
         >
         </ButtonComponent>
          {/* </Loading> */}
-        <p><WrapperTextLight onClick={handleNegivateForgotPassword}>Quen mat khau</WrapperTextLight></p>
-        <p>Chua co tai khoan <WrapperTextLight onClick={handleNegivateSignUp}>Tao tai khoan</WrapperTextLight></p>
+        <p><WrapperTextLight onClick={handleNegivateForgotPassword}>Quên mật khẩu</WrapperTextLight></p>
+        <p>Chưa có tài khoản<WrapperTextLight onClick={handleNegivateSignUp}>Tạo tài khoản</WrapperTextLight></p>
 
     </WrapperContainerLeft>
     <WrapperContainerRight>
       <Image src={H14} preview={false} alt="image-logo" height='203px' width='203px'/>
-      <h4>Mua sam o day</h4>
+      <h4>Mua sắm ở đây</h4>
     </WrapperContainerRight>
     </div>
     </div>

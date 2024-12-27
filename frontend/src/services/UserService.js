@@ -93,18 +93,18 @@ export const logoutUser = async () => {
         return res.data;
 };
 
-// export const forgotPassword = async (data) => {
-//     try {
-//       const res = await axios.post(
-//         `${process.env.REACT_APP_API_URL_BACKEND}/user/forgotPassword`,
-//         data
-//       );
-//       return res.data;
-//     } catch (error) {
-//       console.error("Error in forgotPassword:", error);
-//       return { status: 'ERR', message: 'Lỗi hệ thống!' };
-//     }
-//   };
+export const forgotPassword = async (data) => {
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL_BACKEND}/user/forgot-password`,
+        data
+      );
+      return res.data;
+    } catch (error) {
+      console.error("Error in forgotPassword:", error);
+      return { status: 'ERR', message: 'Lỗi hệ thống!' };
+    }
+  };
 
 
 // export const updateUser = async (id, data) => {

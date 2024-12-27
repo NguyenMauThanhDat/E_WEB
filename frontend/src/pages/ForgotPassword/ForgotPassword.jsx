@@ -11,26 +11,26 @@ const ForgotPassword = () => {
   const [isSent, setIsSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-//   const handleForgotPassword = async () => {
-//     if (!email) {
-//       message.error("Email không được để trống!");
-//       return;
-//     }
-//     setIsLoading(true);
-//     try {
-//       const res = await UseService.forgotPassword({ email });
-//       if (res?.status === 'OK') {
-//         setIsSent(true);
-//         message.success("Đã gửi email đặt lại mật khẩu. Vui lòng kiểm tra hộp thư!");
-//       } else {
-//         message.error(res?.message || "Đã xảy ra lỗi, vui lòng thử lại!");
-//       }
-//     } catch (error) {
-//       message.error("Đã xảy ra lỗi hệ thống!");
-//     } finally {
-//       setIsLoading(false);
-//     }
-//  };
+   const handleForgotPassword = async () => {
+    if (!email) {
+      message.error("Email không được để trống!");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const res = await UseService.forgotPassword({ email });
+      if (res?.status === 'OK') {
+        setIsSent(true);
+        message.success("Đã gửi email đặt lại mật khẩu. Vui lòng kiểm tra hộp thư!");
+      } else {
+        message.error(res?.message || "Đã xảy ra lỗi, vui lòng thử lại!");
+      }
+    } catch (error) {
+      message.error("Đã xảy ra lỗi hệ thống!");
+    } finally {
+      setIsLoading(false);
+    }
+ };
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: 'rgba(0,0,0,0.53)' }}>
@@ -40,11 +40,11 @@ const ForgotPassword = () => {
         <InputForm
           placeholder="Nhập email của bạn"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(value) => setEmail(value)}
           style={{ marginBottom: '20px' }}
         />
         <ButtonComponent
-         // onClick={handleForgotPassword}
+         onClick={handleForgotPassword}
           size={40}
           disabled={!email}
           isLoading={isLoading}

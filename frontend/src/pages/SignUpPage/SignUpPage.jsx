@@ -37,14 +37,24 @@ const SignUpPage = () => {
   )
 
 const {data, isLoading, isSuccess, isError} =mutation
-useEffect(()=>{
-   if(isSuccess){
-    message.success()
-    handleNavigateSignIn()
-  } else if(isError){
-    message.error()
+// useEffect(()=>{
+//    if(isSuccess){
+//     message.success()
+//     handleNavigateSignIn()
+//   } else if(isError){
+//     message.error()
+//   }
+// },[isSuccess, isError])
+useEffect(() => {
+  if (isSuccess && data?.status === "OK") {
+    message.success("Sign-up successful!");
+    handleNavigateSignIn();
+  } else if (data?.status === "ERR") {
+    message.error(data?.message || "Sign-up failed.");
+  } else if (isError) {
+    message.error("An unexpected error occurred.");
   }
-},[isSuccess, isError])
+}, [isSuccess, isError, data]);
 
   const navigate = useNavigate()
   const handleNavigateSignIn=()=>{
@@ -91,18 +101,18 @@ useEffect(()=>{
             borderRadius:'4px', 
             margin:'26px 0 10px'
           }}
-          textButton={'Dang ki'}
+          textButton={'Đăng kí'}
           styleTextButton={{color:'#fff', fontSize:'15px', fontWeight:'500'}}
         >
         </ButtonComponent>
         {/* </Loading> */}
         {/* <p><WrapperTextLight>Quen mat khau</WrapperTextLight></p> */}
-        <p>Ban da co tai khoan <WrapperTextLight onClick={handleNavigateSignIn}>Dang nhap</WrapperTextLight></p>
+        <p>Bạn đã có tài khoản<WrapperTextLight onClick={handleNavigateSignIn}>Dang nhap</WrapperTextLight></p>
 
     </WrapperContainerLeft>
     <WrapperContainerRight>
       <Image src={H14} preview={false} alt="image-logo" height='203px' width='203px'/>
-      <h4>Mua sam o day</h4>
+      <h4>Mua sắm ở đây</h4>
     </WrapperContainerRight>
     </div>
     </div>

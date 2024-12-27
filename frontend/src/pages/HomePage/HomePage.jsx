@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import TypeProduct from "../../components/TypeProduct/TypeProduct";
 import { WrapperButtonMore, WrapperTypeProduct } from "./style";
 import SliderComponent from "../../components/SliderComponent/SliderComponent";
-import H14 from "../../assets/image/H14.png";
-import H15 from "../../assets/image/H15.png";
-import H16 from "../../assets/image/H16.png";
+import H1 from "../../assets/image/H1.jpg";
+import H2 from "../../assets/image/H2.png";
+import H3 from "../../assets/image/H3.jpg";
 import CardComponent from "../../components/CardComponent/CardComponent";
 import NavbarComponent from "../../components/NavbarComponent/NavbarComponent";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
@@ -81,7 +81,7 @@ const HomePage = () => {
           id="container"
           style={{ margin: "0 auto", height: "1000px", width: "1210px" }}
         >
-          <SliderComponent arrImages={[H14, H15, H16]} />
+          <SliderComponent arrImages={[H1, H2, H3]} />
           <WrapperProduct>
             {stateProducts?.map((product)=>{
               return (
